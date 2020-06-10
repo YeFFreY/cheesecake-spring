@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/activities")
+@RequestMapping("/activities")
 public class ActivitiesController {
     @GetMapping
     public List<Map<String, String>> activities() {
