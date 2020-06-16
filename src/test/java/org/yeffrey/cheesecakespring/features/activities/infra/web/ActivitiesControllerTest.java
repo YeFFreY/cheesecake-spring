@@ -19,14 +19,17 @@ import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.yeffrey.cheesecakespring.features.activities.domain.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.features.common.EntityId;
 
+import javax.annotation.Nullable;
 import javax.transaction.Transactional;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,11 +46,16 @@ class ActivitiesControllerTest {
     @Autowired
     ObjectMapper mapper;
 
+    private ResultMatcher listHasSize(int size) {
+        return jsonPath("$", hasSize(size));
+    }
+
+
     private CreateUpdateActivityCommand givenACreateUpdateCommand() {
         return new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph());
     }
 
-    protected EntityId newActivity(CreateUpdateActivityCommand command, String userId) throws Exception {
+    protected EntityId newActivity(CreateUpdateActivityCommand command, @Nullable String userId) throws Exception {
         MockHttpServletRequestBuilder post = post("/api/activities");
 
         if (Objects.nonNull(userId)) {
@@ -143,7 +151,7 @@ class ActivitiesControllerTest {
 
 
         showActivities()
-            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(listHasSize(2))
             .andExpect(jsonPath("$[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
             .andExpect(jsonPath("$[*].name", containsInAnyOrder(command.name, anotherCommand.name)));
 

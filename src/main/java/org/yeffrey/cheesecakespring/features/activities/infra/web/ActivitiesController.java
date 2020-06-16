@@ -1,5 +1,7 @@
 package org.yeffrey.cheesecakespring.features.activities.infra.web;
 
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,13 @@ import java.util.List;
 @RequestMapping("/api/activities")
 class ActivitiesController {
     private final ActivityStories activityStories;
+    private final ActivityDetailsModelAssembler activityDetailsModelAssembler;
+    private final ActivityOverviewModelAssembler activityOverviewModelAssembler;
 
-    ActivitiesController(ActivityStories activityStories) {
+    ActivitiesController(ActivityStories activityStories, ActivityDetailsModelAssembler activityDetailsModelAssembler, ActivityOverviewModelAssembler activityOverviewModelAssembler) {
         this.activityStories = activityStories;
+        this.activityDetailsModelAssembler = activityDetailsModelAssembler;
+        this.activityOverviewModelAssembler = activityOverviewModelAssembler;
     }
 
     @PostMapping
@@ -27,15 +33,16 @@ class ActivitiesController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ActivityDetails> show(@PathVariable("id") Long id) {
+    ResponseEntity<EntityModel<ActivityDetails>> show(@PathVariable("id") Long id) {
         return this.activityStories.findById(id)
+            .map(activityDetailsModelAssembler::toModel)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping()
-    ResponseEntity<List<ActivityOverview>> list() {
-        return ResponseEntity.ok(this.activityStories.list());
+    ResponseEntity<List<EntityModel<ActivityOverview>>> list() {
+        return ResponseEntity.ok(activityOverviewModelAssembler.toList(this.activityStories.list()));
     }
 
     @PutMapping("/{id}")
