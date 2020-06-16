@@ -1,4 +1,4 @@
-package org.yeffrey.cheesecakespring.configuration;
+package org.yeffrey.cheesecakespring.infrastructure.web;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
