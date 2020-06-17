@@ -5,7 +5,7 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.yeffrey.cheesecakespring.obsolete.features.activities.ActivitiesController;
+import org.yeffrey.cheesecakespring.features.activities.infra.web.ActivitiesController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -18,11 +18,13 @@ class ApiIndexController {
     public RepresentationModel<?> index() {
 
         return RepresentationModel.of(null, Lists.newArrayList(
-            //linkTo(methodOn(ActivitiesController.class).activities()).withRel("activities")
+            linkTo(methodOn(ActivitiesController.class).list()).withRel("activities")
 /*
+
             Map.of("rel", "activities::details", "href", "http://localhost:8080/api/activities"),
             Map.of("rel", "activities::create", "href", "http://localhost:8080/api/activities")
 */
+
         ));
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/activities")
-class ActivitiesController {
+public class ActivitiesController {
     private final ActivityStories activityStories;
     private final ActivityDetailsModelAssembler activityDetailsModelAssembler;
     private final ActivityOverviewModelAssembler activityOverviewModelAssembler;
@@ -27,13 +27,13 @@ class ActivitiesController {
     }
 
     @PostMapping
-    ResponseEntity<EntityId> create(@RequestBody CreateUpdateActivityCommand command) {
+    public ResponseEntity<EntityId> create(@RequestBody CreateUpdateActivityCommand command) {
         Long id = this.activityStories.registerActivity(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(EntityId.from(id));
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<EntityModel<ActivityDetails>> show(@PathVariable("id") Long id) {
+    public ResponseEntity<EntityModel<ActivityDetails>> show(@PathVariable("id") Long id) {
         return this.activityStories.findById(id)
             .map(activityDetailsModelAssembler::toModel)
             .map(ResponseEntity::ok)
@@ -41,12 +41,12 @@ class ActivitiesController {
     }
 
     @GetMapping()
-    ResponseEntity<List<EntityModel<ActivityOverview>>> list() {
+    public ResponseEntity<List<EntityModel<ActivityOverview>>> list() {
         return ResponseEntity.ok(activityOverviewModelAssembler.toList(this.activityStories.list()));
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody CreateUpdateActivityCommand command) {
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody CreateUpdateActivityCommand command) {
         this.activityStories.updateActivity(id, command);
         return new ResponseEntity<>(HttpStatus.OK);
     }

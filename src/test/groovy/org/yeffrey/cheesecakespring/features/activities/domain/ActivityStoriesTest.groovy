@@ -6,7 +6,7 @@ import org.yeffrey.cheesecakespring.features.activities.domain.dto.CreateUpdateA
 
 import static org.hamcrest.Matchers.hasSize
 
-class ActivityStoriesSpec extends BaseSpecification {
+class ActivityStoriesTest extends BaseSpecification {
 
     def newRegisterCommand() {
         return new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph())

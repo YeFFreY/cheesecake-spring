@@ -4,6 +4,7 @@ import org.yeffrey.cheesecakespring.features.common.BaseDomain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -22,6 +23,7 @@ class Activity extends BaseDomain {
     private String description;
 
     @NotBlank
+    @Size(max = 255)
     @Column(name = "owner_id")
     private String ownerId; // FIXME should this become an interface "OwnedDomain" for instance ?
 
@@ -62,5 +64,9 @@ class Activity extends BaseDomain {
 
     boolean belongsTo(String ownerId) {
         return ownerId != null && ownerId.equals(this.ownerId);
+    }
+
+    String getOwnerId() {
+        return ownerId;
     }
 }
