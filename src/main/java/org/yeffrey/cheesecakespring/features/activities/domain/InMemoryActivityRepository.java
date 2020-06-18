@@ -39,7 +39,7 @@ class InMemoryActivityRepository implements ActivityRepository {
     public List<ActivityOverview> findAllByOwnerId(String ownerId) {
         return this.db.values().stream()
             .filter(a -> a.belongsTo(ownerId))
-            .map(ActivityOverviewDto::new)
+            .map(a -> new ActivityOverview(a.getId(), a.getName()))
             .collect(Collectors.toList());
     }
 
@@ -66,21 +66,4 @@ class InMemoryActivityRepository implements ActivityRepository {
         }
     }
 
-    static class ActivityOverviewDto implements ActivityOverview {
-        private final Activity activity;
-        public ActivityOverviewDto(Activity activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        public Long getId() {
-            return activity.getId();
-        }
-
-        @Override
-        public String getName() {
-            return activity.getName();
-        }
-
-    }
 }

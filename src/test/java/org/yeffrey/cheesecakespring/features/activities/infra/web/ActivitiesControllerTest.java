@@ -1,9 +1,7 @@
 package org.yeffrey.cheesecakespring.features.activities.infra.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,23 +11,19 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.yeffrey.cheesecakespring.features.activities.domain.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.features.common.EntityId;
+import org.yeffrey.cheesecakespring.utils.JsonTestUtils;
 
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
-
 import java.util.Objects;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,11 +40,6 @@ class ActivitiesControllerTest {
     @Autowired
     ObjectMapper mapper;
 
-    private ResultMatcher listHasSize(int size) {
-        return jsonPath("$", hasSize(size));
-    }
-
-
     private CreateUpdateActivityCommand givenACreateUpdateCommand() {
         return new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph());
     }
@@ -59,7 +48,7 @@ class ActivitiesControllerTest {
         MockHttpServletRequestBuilder post = post("/api/activities");
 
         if (Objects.nonNull(userId)) {
-          post = post.with(user(userId));
+            post = post.with(user(userId));
         }
 
         String response = mvc.perform(post
@@ -111,7 +100,10 @@ class ActivitiesControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(entityId.getId()))
             .andExpect(jsonPath("$.name").value(command.name))
-            .andExpect(jsonPath("$.description").value(command.description));
+            .andExpect(jsonPath("$.description").value(command.description))
+            .andExpect(JsonTestUtils.hasLinksCount(2))
+            .andExpect(JsonTestUtils.hasLink("self"))
+            .andExpect(JsonTestUtils.hasLink("update"));
 
     }
 
@@ -149,11 +141,11 @@ class ActivitiesControllerTest {
         CreateUpdateActivityCommand anotherCommand = givenACreateUpdateCommand();
         EntityId anotherEntityId = newActivity(anotherCommand);
 
-
         showActivities()
-            .andExpect(listHasSize(2))
-            .andExpect(jsonPath("$[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
-            .andExpect(jsonPath("$[*].name", containsInAnyOrder(command.name, anotherCommand.name)));
+            .andExpect(jsonPath("$._embedded.activities", hasSize(2)))
+            .andExpect(jsonPath("$._embedded.activities[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
+            .andExpect(jsonPath("$._embedded.activities[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
+            .andExpect(jsonPath("$._embedded.activities[*]._links", everyItem(hasKey("self"))));
 
     }
 

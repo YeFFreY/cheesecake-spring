@@ -11,8 +11,6 @@ import org.yeffrey.cheesecakespring.features.activities.domain.dto.ActivityOverv
 import org.yeffrey.cheesecakespring.features.activities.domain.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.features.common.EntityId;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/activities")
 public class ActivitiesController {
@@ -40,9 +38,9 @@ public class ActivitiesController {
             .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping()
-    public ResponseEntity<List<EntityModel<ActivityOverview>>> list() {
-        return ResponseEntity.ok(activityOverviewModelAssembler.toList(this.activityStories.list()));
+    @GetMapping
+    public ResponseEntity<CollectionModel<EntityModel<ActivityOverview>>> list() {
+        return ResponseEntity.ok(activityOverviewModelAssembler.toCollectionModel(this.activityStories.list()));
     }
 
     @PutMapping("/{id}")

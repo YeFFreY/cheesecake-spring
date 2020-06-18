@@ -8,9 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.yeffrey.cheesecakespring.utils.JsonTestUtils;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -27,7 +26,8 @@ class ApiIndexControllerTest {
         mvc.perform(MockMvcRequestBuilders.get("/")
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andExpect(JsonTestUtils.hasLinksCount(1))
+            .andExpect(JsonTestUtils.hasLink("activities"));
     }
 
 }
