@@ -9,13 +9,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-class InMemoryActivityRepository implements ActivityRepository {
+class ActivityRepositoryInMemory implements ActivityRepository {
     private final ConcurrentHashMap<Long, Activity> db = new ConcurrentHashMap<>();
     private final AtomicLong activitySequence = new AtomicLong();
 
     @Override
     public Activity save(Activity entity) {
-        if(entity.getId() == null) {
+        if (entity.getId() == null) {
             entity.setId(activitySequence.getAndIncrement());
         }
         db.put(entity.getId(), entity);
@@ -26,7 +26,7 @@ class InMemoryActivityRepository implements ActivityRepository {
     public Optional<ActivityDetails> findDetailsByIdAndOwnerId(Long id, String ownerId) {
         return Optional.ofNullable(this.db.get(id))
             .filter(a -> a.belongsTo(ownerId))
-            .map(ActivityDetailsDto::new);
+            .map(a -> new ActivityDetails(a.getId(), a.getName(), a.getDescription()));
     }
 
     @Override
@@ -43,27 +43,5 @@ class InMemoryActivityRepository implements ActivityRepository {
             .collect(Collectors.toList());
     }
 
-    static class ActivityDetailsDto implements ActivityDetails {
-
-        private final Activity activity;
-        public ActivityDetailsDto(Activity activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        public Long getId() {
-            return activity.getId();
-        }
-
-        @Override
-        public String getName() {
-            return activity.getName();
-        }
-
-        @Override
-        public String getDescription() {
-            return activity.getDescription();
-        }
-    }
 
 }

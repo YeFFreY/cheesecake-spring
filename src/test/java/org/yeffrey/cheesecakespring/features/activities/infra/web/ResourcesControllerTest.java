@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.yeffrey.cheesecakespring.features.activities.domain.dto.CreateUpdateActivityCommand;
+import org.yeffrey.cheesecakespring.features.activities.domain.dto.CreateUpdateResourceCommand;
 import org.yeffrey.cheesecakespring.features.common.EntityId;
 import org.yeffrey.cheesecakespring.utils.JsonTestUtils;
 
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("integration")
 @AutoConfigureMockMvc
 @Transactional
-class ActivitiesControllerTest implements ActivitiesEndpoint {
+class ResourcesControllerTest implements ResourcesEndpoint {
     Faker faker = new Faker();
 
 
@@ -44,23 +44,24 @@ class ActivitiesControllerTest implements ActivitiesEndpoint {
         return this.mapper;
     }
 
-    private CreateUpdateActivityCommand givenACreateUpdateCommand() {
-        return new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph());
+    private CreateUpdateResourceCommand givenACreateUpdateCommand() {
+        return new CreateUpdateResourceCommand(faker.lorem().sentence(), faker.lorem().paragraph(), "Item");
     }
 
 
     @Test
     @WithMockUser
     public void userShouldRetrieveAnActivityHeCreated() throws Exception {
-        CreateUpdateActivityCommand command = givenACreateUpdateCommand();
-        EntityId entityId = newActivity(command);
+        CreateUpdateResourceCommand command = givenACreateUpdateCommand();
+        EntityId entityId = newResource(command);
         assertThat(entityId).isNotNull();
 
-        showActivity(entityId)
+        showResource(entityId)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(entityId.getId()))
             .andExpect(jsonPath("$.name").value(command.name))
             .andExpect(jsonPath("$.description").value(command.description))
+            .andExpect(jsonPath("$.quantityUnit").value(command.quantityUnit))
             .andExpect(JsonTestUtils.hasLinksCount(2))
             .andExpect(JsonTestUtils.hasLink("self"))
             .andExpect(JsonTestUtils.hasLink("update"));
@@ -69,43 +70,44 @@ class ActivitiesControllerTest implements ActivitiesEndpoint {
 
     @Test
     @WithMockUser
-    public void userShouldNotRetrieveAnActivityCreatedByAnotherUser() throws Exception {
-        EntityId anotherUserActivity = newActivity(givenACreateUpdateCommand(), "anotherUser");
+    public void userShouldNotRetrieveAnResourceCreatedByAnotherUser() throws Exception {
+        EntityId anotherUserResource = newResource(givenACreateUpdateCommand(), "anotherUser");
 
-        showActivity(anotherUserActivity).andExpect(status().isNotFound())
+        showResource(anotherUserResource).andExpect(status().isNotFound())
             .andExpect(jsonPath("$").doesNotExist());
 
     }
 
     @Test
     @WithMockUser
-    public void userShouldUpdateAnActivityHeCreated() throws Exception {
-        CreateUpdateActivityCommand command = givenACreateUpdateCommand();
-        EntityId entityId = newActivity(command);
+    public void userShouldUpdateAnResourceHeCreated() throws Exception {
+        CreateUpdateResourceCommand command = givenACreateUpdateCommand();
+        EntityId entityId = newResource(command);
 
-        CreateUpdateActivityCommand updateCommand = givenACreateUpdateCommand();
-        updateActivity(entityId, updateCommand);
+        CreateUpdateResourceCommand updateCommand = givenACreateUpdateCommand();
+        updateResource(entityId, updateCommand);
 
-        showActivity(entityId)
+        showResource(entityId)
             .andExpect(jsonPath("$.id").value(entityId.getId()))
             .andExpect(jsonPath("$.name").value(updateCommand.name))
-            .andExpect(jsonPath("$.description").value(updateCommand.description));
+            .andExpect(jsonPath("$.description").value(updateCommand.description))
+            .andExpect(jsonPath("$.quantityUnit").value(updateCommand.quantityUnit));
 
     }
 
     @Test
     @WithMockUser
-    public void userShouldRetrieveAllActivitiesHeCreated() throws Exception {
-        CreateUpdateActivityCommand command = givenACreateUpdateCommand();
-        EntityId entityId = newActivity(command);
-        CreateUpdateActivityCommand anotherCommand = givenACreateUpdateCommand();
-        EntityId anotherEntityId = newActivity(anotherCommand);
+    public void userShouldRetrieveAllResourcesHeCreated() throws Exception {
+        CreateUpdateResourceCommand command = givenACreateUpdateCommand();
+        EntityId entityId = newResource(command);
+        CreateUpdateResourceCommand anotherCommand = givenACreateUpdateCommand();
+        EntityId anotherEntityId = newResource(anotherCommand);
 
-        showActivities()
-            .andExpect(jsonPath("$._embedded.activities", hasSize(2)))
-            .andExpect(jsonPath("$._embedded.activities[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
-            .andExpect(jsonPath("$._embedded.activities[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
-            .andExpect(jsonPath("$._embedded.activities[*]._links", everyItem(hasKey("self"))));
+        showResources()
+            .andExpect(jsonPath("$._embedded.resources", hasSize(2)))
+            .andExpect(jsonPath("$._embedded.resources[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
+            .andExpect(jsonPath("$._embedded.resources[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
+            .andExpect(jsonPath("$._embedded.resources[*]._links", everyItem(hasKey("self"))));
 
     }
 

@@ -4,21 +4,21 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-import org.yeffrey.cheesecakespring.features.activities.domain.dto.ActivityOverview;
+import org.yeffrey.cheesecakespring.features.activities.domain.dto.ResourceOverview;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-class ActivityOverviewModelAssembler implements SimpleRepresentationModelAssembler<ActivityOverview> {
+class ResourceOverviewModelAssembler implements SimpleRepresentationModelAssembler<ResourceOverview> {
 
     @Override
-    public void addLinks(EntityModel<ActivityOverview> resource) {
-        resource.add(linkTo(methodOn(ActivitiesController.class).show(resource.getContent().getId())).withSelfRel());
+    public void addLinks(EntityModel<ResourceOverview> resource) {
+        resource.add(linkTo(methodOn(ResourcesController.class).show(resource.getContent().getId())).withSelfRel());
     }
 
     @Override
-    public void addLinks(CollectionModel<EntityModel<ActivityOverview>> resources) {
+    public void addLinks(CollectionModel<EntityModel<ResourceOverview>> resources) {
 
     }
 

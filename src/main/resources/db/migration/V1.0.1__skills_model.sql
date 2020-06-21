@@ -9,10 +9,10 @@ CREATE SEQUENCE skills_seq
 CREATE TABLE skills
 (
     id          bigint                 not null default nextval('skills_seq'),
-    uuid        character varying(255) not null
-        constraint skills_uuid_uk UNIQUE,
+    uuid        character varying(255) not null constraint skills_uuid_uk UNIQUE,
     name        character varying(255) not null,
     description text,
     owner_id    character varying(255) not null,
+    version     integer not null default 0,
     CONSTRAINT skills_pkey PRIMARY KEY (id)
 )

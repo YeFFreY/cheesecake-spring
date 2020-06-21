@@ -16,7 +16,6 @@ import org.yeffrey.cheesecakespring.utils.JsonTestUtils;
 import javax.transaction.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,9 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("integration")
 @AutoConfigureMockMvc
 @Transactional
-class ActivitiesControllerTest implements ActivitiesEndpoint {
+class ActivityResourcesControllerTest implements ActivitiesEndpoint {
     Faker faker = new Faker();
-
 
     @Autowired
     private MockMvc mvc;
@@ -48,10 +46,9 @@ class ActivitiesControllerTest implements ActivitiesEndpoint {
         return new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph());
     }
 
-
     @Test
     @WithMockUser
-    public void userShouldRetrieveAnActivityHeCreated() throws Exception {
+    public void userCanAddResourceToExistingActivity() throws Exception {
         CreateUpdateActivityCommand command = givenACreateUpdateCommand();
         EntityId entityId = newActivity(command);
         assertThat(entityId).isNotNull();
@@ -67,46 +64,5 @@ class ActivitiesControllerTest implements ActivitiesEndpoint {
 
     }
 
-    @Test
-    @WithMockUser
-    public void userShouldNotRetrieveAnActivityCreatedByAnotherUser() throws Exception {
-        EntityId anotherUserActivity = newActivity(givenACreateUpdateCommand(), "anotherUser");
-
-        showActivity(anotherUserActivity).andExpect(status().isNotFound())
-            .andExpect(jsonPath("$").doesNotExist());
-
-    }
-
-    @Test
-    @WithMockUser
-    public void userShouldUpdateAnActivityHeCreated() throws Exception {
-        CreateUpdateActivityCommand command = givenACreateUpdateCommand();
-        EntityId entityId = newActivity(command);
-
-        CreateUpdateActivityCommand updateCommand = givenACreateUpdateCommand();
-        updateActivity(entityId, updateCommand);
-
-        showActivity(entityId)
-            .andExpect(jsonPath("$.id").value(entityId.getId()))
-            .andExpect(jsonPath("$.name").value(updateCommand.name))
-            .andExpect(jsonPath("$.description").value(updateCommand.description));
-
-    }
-
-    @Test
-    @WithMockUser
-    public void userShouldRetrieveAllActivitiesHeCreated() throws Exception {
-        CreateUpdateActivityCommand command = givenACreateUpdateCommand();
-        EntityId entityId = newActivity(command);
-        CreateUpdateActivityCommand anotherCommand = givenACreateUpdateCommand();
-        EntityId anotherEntityId = newActivity(anotherCommand);
-
-        showActivities()
-            .andExpect(jsonPath("$._embedded.activities", hasSize(2)))
-            .andExpect(jsonPath("$._embedded.activities[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
-            .andExpect(jsonPath("$._embedded.activities[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
-            .andExpect(jsonPath("$._embedded.activities[*]._links", everyItem(hasKey("self"))));
-
-    }
 
 }

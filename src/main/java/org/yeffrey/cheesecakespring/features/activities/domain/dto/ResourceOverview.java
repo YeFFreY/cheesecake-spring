@@ -6,12 +6,12 @@ import org.springframework.hateoas.server.core.Relation;
  * Light represenation of an activity when activities are retrieved as a list.
  * This needs to be a class to benefit from hateoas using @{@link Relation}
  */
-@Relation(collectionRelation = "activities")
-public class ActivityOverview implements ModelDto {
+@Relation(collectionRelation = "resources")
+public class ResourceOverview implements ModelDto {
     private final Long id;
     private final String name;
 
-    public ActivityOverview(Long id, String name) {
+    public ResourceOverview(Long id, String name) {
         this.id = id;
         this.name = name;
     }

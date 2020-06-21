@@ -6,13 +6,13 @@ import org.yeffrey.cheesecakespring.features.activities.domain.dto.CreateUpdateA
 
 import static org.hamcrest.Matchers.hasSize
 
-class ActivityStoriesTest extends BaseSpecification {
+class ActivityStoriesSpec extends BaseSpecification {
 
     def newRegisterCommand() {
         return new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph())
     }
     def updateCommand = new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph())
-    def stories = new ActivityConfiguration().activityStories(authenticatedService)
+    def stories = new ActivitiesConfiguration().activityStories(authenticatedService)
 
     def "should show the activity details for the user who created it"() {
         given: "an authenticated user"

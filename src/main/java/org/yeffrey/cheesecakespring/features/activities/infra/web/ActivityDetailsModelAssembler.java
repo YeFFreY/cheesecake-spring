@@ -5,13 +5,12 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import org.yeffrey.cheesecakespring.features.activities.domain.dto.ActivityDetails;
-import org.yeffrey.cheesecakespring.features.activities.domain.dto.ActivityDto;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class ActivityDetailsModelAssembler implements SimpleRepresentationModelAssembler<ActivityDetails> {
+class ActivityDetailsModelAssembler implements SimpleRepresentationModelAssembler<ActivityDetails> {
 
     @Override
     public void addLinks(EntityModel<ActivityDetails> resource) {

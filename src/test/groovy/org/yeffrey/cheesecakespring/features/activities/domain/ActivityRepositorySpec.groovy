@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.hasSize
 @ActiveProfiles("integration")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-class ActivityRepositoryTest extends Specification {
+class ActivityRepositorySpec extends Specification {
     @Shared
     def faker = new Faker()
 
@@ -26,6 +26,9 @@ class ActivityRepositoryTest extends Specification {
 
     @Autowired
     ActivityRepository activityRepository
+
+    @Autowired
+    ResourceRepository resourceRepository
 
     def "should save an activity"() {
         given: "valid input"
@@ -116,6 +119,25 @@ class ActivityRepositoryTest extends Specification {
             activitiesOfUser hasSize(3)
             activitiesOfUser*.id == [activity1OfUser.id, activity2OfUser.id, activity3OfUser.id]
             activitiesOfUser*.name == [activity1OfUser.name, activity2OfUser.name, activity3OfUser.name]
-            activitiesOfUser*.id.every { it != activity1OfAnotherUser.id}
+            activitiesOfUser*.id.every { it != activity1OfAnotherUser.id }
+    }
+
+    def "should add a resource to an activity"() {
+        given: "valid input"
+            def activity = activityRepository.save(Activity.from(faker.lorem().sentence(), faker.lorem().paragraph(), faker.name().username()))
+            def resource = resourceRepository.save(Resource.from(faker.lorem().sentence(), faker.lorem().paragraph(), ResourceQuantityUnit.Item, activity.ownerId))
+            def qty = faker.number().randomDigitNotZero()
+        when: "resource is added to activity"
+            activity.addResource(resource, qty)
+            activityRepository.save(activity)
+            entityManager.flush()
+            entityManager.clear()
+
+        then: "activity with relation to resource is saved"
+            def activityWithResource = activityRepository.findByIdAndOwnerId(activity.id, activity.ownerId)
+            activityWithResource.isPresent()
+            activityWithResource.get().resources.size() == 1
+            activityWithResource.get().resources[0].resource.id == resource.id
+            activityWithResource.get().resources[0].quantity == qty
     }
 }

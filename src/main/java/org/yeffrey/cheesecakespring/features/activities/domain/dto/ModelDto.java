@@ -1,5 +1,5 @@
 package org.yeffrey.cheesecakespring.features.activities.domain.dto;
 
-public interface ActivityDto {
+public interface ModelDto {
     Long getId();
 }

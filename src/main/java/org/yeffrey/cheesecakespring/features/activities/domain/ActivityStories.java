@@ -1,10 +1,9 @@
 package org.yeffrey.cheesecakespring.features.activities.domain;
 
-import org.mapstruct.factory.Mappers;
 import org.springframework.transaction.annotation.Transactional;
+import org.yeffrey.cheesecakespring.features.activities.domain.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.features.activities.domain.dto.ActivityOverview;
 import org.yeffrey.cheesecakespring.features.activities.domain.dto.CreateUpdateActivityCommand;
-import org.yeffrey.cheesecakespring.features.activities.domain.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.features.common.AuthenticatedUserPort;
 import org.yeffrey.cheesecakespring.obsolete.domain.exception.AccessDeniedException;
 
@@ -37,12 +36,11 @@ public class ActivityStories {
     }
 
     public void updateActivity(Long id, CreateUpdateActivityCommand command) {
-        ActivityMapper.CreateUpdateActivityCommandMapper mapper = Mappers.getMapper( ActivityMapper.CreateUpdateActivityCommandMapper.class );
 
         String userId = this.authenticatedUserPort.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
 
         activityRepository.findByIdAndOwnerId(id, userId)
-            .map(a -> mapper.updateEntity(command, a))
+            .map(a -> a.updateDetails(command.name, command.description))
             .ifPresent(activityRepository::save);
     }
 
