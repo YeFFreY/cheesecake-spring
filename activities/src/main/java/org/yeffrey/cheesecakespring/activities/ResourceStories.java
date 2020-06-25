@@ -1,0 +1,51 @@
+package org.yeffrey.cheesecakespring.activities;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.yeffrey.cheesecakespring.activities.domain.ResourceDescription;
+import org.yeffrey.cheesecakespring.activities.domain.ResourceName;
+import org.yeffrey.cheesecakespring.activities.domain.UserId;
+import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateResourceCommand;
+import org.yeffrey.cheesecakespring.activities.dto.ResourceDetails;
+import org.yeffrey.cheesecakespring.activities.dto.ResourceOverview;
+
+import java.util.List;
+import java.util.Optional;
+
+//@Service // On essaie de le constuire uniquement dans la config, est-ce que Transactional fonctionnera ?
+@Transactional(readOnly = true)
+public class ResourceStories {
+
+    private final ResourceRepository resourceRepository;
+    private final AuthenticatedUserPort authenticatedUserPort;
+
+    public ResourceStories(ResourceRepository resourceRepository, AuthenticatedUserPort authenticatedUserPort) {
+        this.resourceRepository = resourceRepository;
+        this.authenticatedUserPort = authenticatedUserPort;
+    }
+
+    @Transactional
+    public Long registerResource(CreateUpdateResourceCommand command) {
+        UserId userId = this.authenticatedUserPort.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
+
+        Resource newResource = Resource.from(ResourceName.from(command.name), ResourceDescription.from(command.description), ResourceQuantityUnit.valueOf(command.quantityUnit), userId);
+        return this.resourceRepository.save(newResource).getId();
+    }
+
+    public Optional<ResourceDetails> findById(Long id) {
+        return this.authenticatedUserPort.getAuthenticatedUserId()
+            .flatMap(userId -> resourceRepository.findDetailsByIdAndOwnerId(id, userId));
+    }
+
+    public void updateResource(Long id, CreateUpdateResourceCommand command) {
+        UserId userId = this.authenticatedUserPort.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
+
+        resourceRepository.findByIdAndOwnerId(id, userId)
+            .map(r -> r.updateDetails(ResourceName.from(command.name), ResourceDescription.from(command.description), ResourceQuantityUnit.valueOf(command.quantityUnit)))
+            .ifPresent(resourceRepository::save);
+    }
+
+    public List<ResourceOverview> list() {
+        UserId userId = this.authenticatedUserPort.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
+        return this.resourceRepository.findAllByOwnerId(userId);
+    }
+}
