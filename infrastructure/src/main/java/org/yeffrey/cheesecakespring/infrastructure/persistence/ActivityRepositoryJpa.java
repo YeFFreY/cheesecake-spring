@@ -1,7 +1,7 @@
 package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
 import org.springframework.data.repository.Repository;
-import org.yeffrey.cheesecakespring.activities.Activity;
+import org.yeffrey.cheesecakespring.activities.domain.Activity;
 import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;

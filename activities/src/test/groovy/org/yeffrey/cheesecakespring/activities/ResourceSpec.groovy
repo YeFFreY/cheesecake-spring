@@ -1,8 +1,6 @@
 package org.yeffrey.cheesecakespring.activities
 
-import org.yeffrey.cheesecakespring.activities.domain.ResourceDescription
-import org.yeffrey.cheesecakespring.activities.domain.ResourceName
-import org.yeffrey.cheesecakespring.activities.domain.UserId
+import org.yeffrey.cheesecakespring.activities.domain.*
 
 class ResourceSpec extends BaseSpecification {
 

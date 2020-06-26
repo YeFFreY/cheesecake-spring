@@ -4,12 +4,13 @@ import org.yeffrey.cheesecakespring.activities.domain.UserId;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.util.Objects;
 
 @Converter(autoApply = true)
 public class UserIdAttributeConverter implements AttributeConverter<UserId, String> {
     @Override
     public String convertToDatabaseColumn(UserId attribute) {
-        return attribute.asString();
+        return Objects.nonNull(attribute) ? attribute.asString() : null;
     }
 
     @Override

@@ -4,12 +4,13 @@ import org.yeffrey.cheesecakespring.activities.domain.ActivityName;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.util.Objects;
 
 @Converter(autoApply = true)
 public class ActivityNameAttributeConverter implements AttributeConverter<ActivityName, String> {
     @Override
     public String convertToDatabaseColumn(ActivityName attribute) {
-        return attribute.asString();
+        return Objects.nonNull(attribute) ? attribute.asString() : null;
     }
 
     @Override

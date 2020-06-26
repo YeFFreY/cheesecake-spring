@@ -1,8 +1,6 @@
-package org.yeffrey.cheesecakespring.activities;
+package org.yeffrey.cheesecakespring.activities.domain;
 
-import org.yeffrey.cheesecakespring.activities.domain.ActivityDescription;
-import org.yeffrey.cheesecakespring.activities.domain.ActivityName;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
+import org.yeffrey.cheesecakespring.activities.core.OwnedDomain;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -61,10 +59,6 @@ public class Activity extends OwnedDomain {
 
     public Long getId() {
         return id;
-    }
-
-    void setId(Long id) {
-        this.id = id;
     }
 
     public ActivityName getName() {

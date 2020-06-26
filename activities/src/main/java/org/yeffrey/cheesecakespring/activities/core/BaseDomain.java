@@ -1,4 +1,4 @@
-package org.yeffrey.cheesecakespring.activities;
+package org.yeffrey.cheesecakespring.activities.core;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
@@ -27,4 +27,6 @@ public abstract class BaseDomain implements Serializable {
     public int hashCode() {
         return Objects.hash(uuid);
     }
+
+    public abstract Long getId();
 }

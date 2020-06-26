@@ -3,8 +3,9 @@ package org.yeffrey.cheesecakespring.infrastructure
 import com.github.javafaker.Faker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.yeffrey.cheesecakespring.activities.*
 import org.yeffrey.cheesecakespring.activities.domain.*
+import org.yeffrey.cheesecakespring.activities.ports.ActivityRepository
+import org.yeffrey.cheesecakespring.activities.ports.ResourceRepository
 import spock.lang.Shared
 import spock.lang.Unroll
 

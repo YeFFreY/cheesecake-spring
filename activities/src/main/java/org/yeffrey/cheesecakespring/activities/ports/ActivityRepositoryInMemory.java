@@ -1,27 +1,16 @@
-package org.yeffrey.cheesecakespring.activities;
+package org.yeffrey.cheesecakespring.activities.ports;
 
+import org.yeffrey.cheesecakespring.activities.core.RepositoryInMemory;
+import org.yeffrey.cheesecakespring.activities.domain.Activity;
 import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-class ActivityRepositoryInMemory implements ActivityRepository {
-    private final ConcurrentHashMap<Long, Activity> db = new ConcurrentHashMap<>();
-    private final AtomicLong activitySequence = new AtomicLong();
-
-    @Override
-    public Activity save(Activity entity) {
-        if (entity.getId() == null) {
-            entity.setId(activitySequence.getAndIncrement());
-        }
-        db.put(entity.getId(), entity);
-        return entity;
-    }
+public class ActivityRepositoryInMemory extends RepositoryInMemory<Activity> implements ActivityRepository {
 
     @Override
     public Optional<ActivityDetails> findDetailsByIdAndOwnerId(Long id, UserId ownerId) {
@@ -43,6 +32,5 @@ class ActivityRepositoryInMemory implements ActivityRepository {
             .map(a -> new ActivityOverview(a.getId(), a.getName()))
             .collect(Collectors.toList());
     }
-
 
 }

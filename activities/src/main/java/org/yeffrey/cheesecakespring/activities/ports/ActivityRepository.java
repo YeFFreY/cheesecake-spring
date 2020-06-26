@@ -1,5 +1,6 @@
-package org.yeffrey.cheesecakespring.activities;
+package org.yeffrey.cheesecakespring.activities.ports;
 
+import org.yeffrey.cheesecakespring.activities.domain.Activity;
 import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;

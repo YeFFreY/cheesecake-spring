@@ -1,8 +1,6 @@
-package org.yeffrey.cheesecakespring.activities;
+package org.yeffrey.cheesecakespring.activities.domain;
 
-import org.yeffrey.cheesecakespring.activities.domain.ResourceDescription;
-import org.yeffrey.cheesecakespring.activities.domain.ResourceName;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
+import org.yeffrey.cheesecakespring.activities.core.OwnedDomain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -56,10 +54,6 @@ public class Resource extends OwnedDomain {
 
     public Long getId() {
         return id;
-    }
-
-    void setId(Long id) {
-        this.id = id;
     }
 
     public ResourceName getName() {

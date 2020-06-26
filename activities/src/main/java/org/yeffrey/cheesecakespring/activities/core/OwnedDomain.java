@@ -1,4 +1,4 @@
-package org.yeffrey.cheesecakespring.activities;
+package org.yeffrey.cheesecakespring.activities.core;
 
 import org.yeffrey.cheesecakespring.activities.domain.UserId;
 

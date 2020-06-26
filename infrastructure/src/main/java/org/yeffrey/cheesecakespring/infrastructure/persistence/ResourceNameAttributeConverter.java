@@ -4,12 +4,13 @@ import org.yeffrey.cheesecakespring.activities.domain.ResourceName;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.util.Objects;
 
 @Converter(autoApply = true)
 public class ResourceNameAttributeConverter implements AttributeConverter<ResourceName, String> {
     @Override
     public String convertToDatabaseColumn(ResourceName attribute) {
-        return attribute.asString();
+        return Objects.nonNull(attribute) ? attribute.asString() : null;
     }
 
     @Override

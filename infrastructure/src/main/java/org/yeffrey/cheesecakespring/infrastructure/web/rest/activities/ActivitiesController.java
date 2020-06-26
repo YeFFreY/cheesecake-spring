@@ -11,6 +11,8 @@ import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
 import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/activities")
 public class ActivitiesController {
@@ -43,7 +45,7 @@ public class ActivitiesController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody CreateUpdateActivityCommand command) {
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @Valid @RequestBody CreateUpdateActivityCommand command) {
         this.activityStories.updateActivity(id, command);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -1,4 +1,4 @@
-package org.yeffrey.cheesecakespring.activities;
+package org.yeffrey.cheesecakespring.activities.domain;
 
 import com.google.common.base.Preconditions;
 
