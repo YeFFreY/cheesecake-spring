@@ -102,10 +102,10 @@ class ActivitiesControllerTest implements ActivitiesEndpoint {
         EntityId anotherEntityId = newActivity(anotherCommand);
 
         showActivities()
-            .andExpect(jsonPath("$._embedded.activities", hasSize(2)))
-            .andExpect(jsonPath("$._embedded.activities[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
-            .andExpect(jsonPath("$._embedded.activities[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
-            .andExpect(jsonPath("$._embedded.activities[*]._links", everyItem(hasKey("self"))));
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
+            .andExpect(jsonPath("$[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
+            .andExpect(jsonPath("$[*]._links", everyItem(hasKey("self"))));
 
     }
 

@@ -17,4 +17,6 @@ interface ActivityRepositoryJpa extends Repository<Activity, Long> {
     Optional<Activity> findByIdAndOwnerId(long id, UserId ownerId);
 
     List<ActivityOverview> findAllByOwnerId(UserId ownerId);
+
+    boolean existsByIdAndOwnerId(Long id, UserId ownerId);
 }

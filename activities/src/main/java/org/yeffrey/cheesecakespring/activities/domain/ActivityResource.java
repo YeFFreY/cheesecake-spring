@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import java.util.Objects;
 
 @Entity
 @Table(name = "activity_resources")
@@ -38,7 +39,7 @@ public class ActivityResource {
         return new ActivityResource(activity, resource, quantity);
     }
 
-    public Activity getActivity() {
+    protected Activity getActivity() {
         return activity;
     }
 
@@ -48,5 +49,19 @@ public class ActivityResource {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ActivityResource that = (ActivityResource) o;
+        return activity.equals(that.activity) &&
+            resource.equals(that.resource);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(activity, resource);
     }
 }

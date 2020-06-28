@@ -3,14 +3,14 @@ package org.yeffrey.cheesecakespring.infrastructure
 import com.github.javafaker.Faker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.yeffrey.cheesecakespring.activities.domain.*
+import org.yeffrey.cheesecakespring.activities.domain.DomainSamples
+import org.yeffrey.cheesecakespring.activities.domain.UserId
 import org.yeffrey.cheesecakespring.activities.ports.ResourceRepository
 import spock.lang.Shared
-import spock.lang.Unroll
 
 import static org.hamcrest.Matchers.hasSize
 
-class ResourceRepositorySpec extends IntegrationSpecification {
+class ResourceRepositorySpec extends IntegrationSpecification implements DomainSamples {
     @Shared
     def faker = new Faker()
 
@@ -22,41 +22,21 @@ class ResourceRepositorySpec extends IntegrationSpecification {
 
     def "should save a resource"() {
         given: "valid input"
-            def name = ResourceName.from(faker.lorem().sentence())
-            def description = ResourceDescription.from(faker.lorem().paragraph())
-            def username = UserId.from(faker.name().username())
-            def qtyUnit = ResourceQuantityUnit.Item
+            def user = UserId.from(faker.name().username())
+            def resource = givenResource(user)
 
         expect: "resource is saved and an id is assigned"
-            def result = resourceRepository.save(Resource.from(name, description, qtyUnit, username))
+            def result = resourceRepository.save(resource)
             result.id != null
-            result.description == description
-            result.name == name
-            result.belongsTo(username)
-    }
-
-
-    @Unroll
-    def "should refuse when saving new resource because #problem"() {
-        when: "saving a resource"
-            def result = resourceRepository.save(Resource.from(name, description, quantityUnit, username))
-            entityManager.flush()
-
-        then: "fails"
-            result == null
-            thrown NullPointerException
-
-        where: "input is invalid"
-            problem                 | name                                        | description                                         | quantityUnit              | username
-            "name is null"          | null                                        | ResourceDescription.from(faker.lorem().paragraph()) | ResourceQuantityUnit.Item | UserId.from(faker.name().username())
-            "username is null"      | ResourceName.from(faker.lorem().sentence()) | ResourceDescription.from(faker.lorem().paragraph()) | ResourceQuantityUnit.Item | null
-            "quantity unit is null" | ResourceName.from(faker.lorem().sentence()) | ResourceDescription.from(faker.lorem().paragraph()) | null                      | UserId.from(faker.name().username())
+            result.description == resource.description
+            result.name == resource.name
+            result.belongsTo(user)
     }
 
     def "should retrieve a resource entity created by the same user"() {
         given: "a resource saved by a user"
             def aUser = UserId.from(faker.name().username())
-            def resourceOfUser = resourceRepository.save(Resource.from(ResourceName.from(faker.lorem().sentence()), ResourceDescription.from(faker.lorem().paragraph()), ResourceQuantityUnit.Item, aUser))
+            def resourceOfUser = resourceRepository.save(givenResource(aUser))
             entityManager.flush()
 
         expect: "the resource entity is retrieved for the same user"
@@ -71,7 +51,7 @@ class ResourceRepositorySpec extends IntegrationSpecification {
     def "should retrieve a resource details created by the same user"() {
         given: "a resource saved by a user"
             def aUser = UserId.from(faker.name().username())
-            def resourceOfUser = resourceRepository.save(Resource.from(ResourceName.from(faker.lorem().sentence()), ResourceDescription.from(faker.lorem().paragraph()), ResourceQuantityUnit.Item, aUser))
+            def resourceOfUser = resourceRepository.save(givenResource(aUser))
             entityManager.flush()
 
         expect: "the resource details is retrieved for the same user"
@@ -87,7 +67,7 @@ class ResourceRepositorySpec extends IntegrationSpecification {
     def "should not retrieve a resource created by another user"() {
         given: "a resource saved by a user"
             def aUser = UserId.from(faker.name().username())
-            def resourceOfUser = resourceRepository.save(Resource.from(ResourceName.from(faker.lorem().sentence()), ResourceDescription.from(faker.lorem().paragraph()), ResourceQuantityUnit.Item, aUser))
+            def resourceOfUser = resourceRepository.save(givenResource(aUser))
 
         when: "another user tries to retrieve the resource"
             def anotherUser = UserId.from("anotherUser")
@@ -100,13 +80,13 @@ class ResourceRepositorySpec extends IntegrationSpecification {
     def "should retrieve all resources of the given user only"() {
         given: "some resources which belong to user"
             def aUser = UserId.from(faker.name().username())
-            def resource1OfUser = resourceRepository.save(Resource.from(ResourceName.from(faker.lorem().sentence()), ResourceDescription.from(faker.lorem().paragraph()), ResourceQuantityUnit.Item, aUser))
-            def resource2OfUser = resourceRepository.save(Resource.from(ResourceName.from(faker.lorem().sentence()), ResourceDescription.from(faker.lorem().paragraph()), ResourceQuantityUnit.Item, aUser))
-            def resource3OfUser = resourceRepository.save(Resource.from(ResourceName.from(faker.lorem().sentence()), ResourceDescription.from(faker.lorem().paragraph()), ResourceQuantityUnit.Item, aUser))
+            def resource1OfUser = resourceRepository.save(givenResource(aUser))
+            def resource2OfUser = resourceRepository.save(givenResource(aUser))
+            def resource3OfUser = resourceRepository.save(givenResource(aUser))
 
         and: "some resources which belong to another user"
             def anotherUser = UserId.from("anotherUser")
-            def resource1OfAnotherUser = resourceRepository.save(Resource.from(ResourceName.from(faker.lorem().sentence()), ResourceDescription.from(faker.lorem().paragraph()), ResourceQuantityUnit.Item, anotherUser))
+            def resource1OfAnotherUser = resourceRepository.save(givenResource(anotherUser))
 
         expect: "all resources which belong to the user are retrieved and not the one from another user"
             def resourcesOfUser = resourceRepository.findAllByOwnerId(aUser)

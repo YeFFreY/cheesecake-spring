@@ -1,6 +1,5 @@
 package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities;
 
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +11,7 @@ import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/activities")
@@ -40,8 +40,8 @@ public class ActivitiesController {
     }
 
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<ActivityOverview>>> list() {
-        return ResponseEntity.ok(activityOverviewModelAssembler.toCollectionModel(this.activityStories.list()));
+    public ResponseEntity<List<EntityModel<ActivityOverview>>> list() {
+        return ResponseEntity.ok(activityOverviewModelAssembler.toList(this.activityStories.list()));
     }
 
     @PutMapping("/{id}")

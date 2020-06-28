@@ -104,10 +104,10 @@ class ResourcesControllerTest implements ResourcesEndpoint {
         EntityId anotherEntityId = newResource(anotherCommand);
 
         showResources()
-            .andExpect(jsonPath("$._embedded.resources", hasSize(2)))
-            .andExpect(jsonPath("$._embedded.resources[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
-            .andExpect(jsonPath("$._embedded.resources[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
-            .andExpect(jsonPath("$._embedded.resources[*]._links", everyItem(hasKey("self"))));
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
+            .andExpect(jsonPath("$[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
+            .andExpect(jsonPath("$[*]._links", everyItem(hasKey("self"))));
 
     }
 

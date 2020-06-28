@@ -3,15 +3,15 @@ package org.yeffrey.cheesecakespring.infrastructure
 import com.github.javafaker.Faker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.yeffrey.cheesecakespring.activities.domain.*
+import org.yeffrey.cheesecakespring.activities.domain.DomainSamples
+import org.yeffrey.cheesecakespring.activities.domain.UserId
 import org.yeffrey.cheesecakespring.activities.ports.ActivityRepository
 import org.yeffrey.cheesecakespring.activities.ports.ResourceRepository
 import spock.lang.Shared
-import spock.lang.Unroll
 
 import static org.hamcrest.Matchers.hasSize
 
-class ActivityRepositorySpec extends IntegrationSpecification {
+class ActivityRepositorySpec extends IntegrationSpecification implements DomainSamples {
     @Shared
     def faker = new Faker()
 
@@ -26,38 +26,22 @@ class ActivityRepositorySpec extends IntegrationSpecification {
 
     def "should save an activity"() {
         given: "valid input"
-            def name = ActivityName.from(faker.lorem().sentence())
-            def description = ActivityDescription.from(faker.lorem().paragraph())
-            def username = UserId.from(faker.name().username())
+            def user = UserId.from(faker.name().username())
+            def activity = givenActivity(user)
 
         expect: "activity is saved and an id is assigned"
-            def result = activityRepository.save(Activity.from(name, description, username))
+            def result = activityRepository.save(activity)
             result.id != null
-            result.description == description
-            result.name == name
-            result.belongsTo(username)
+            result.description == activity.description
+            result.name == activity.name
+            result.belongsTo(user)
     }
 
-    @Unroll
-    def "should refuse when saving new activity because #problem"() {
-        when: "saving an activity"
-            def result = activityRepository.save(Activity.from(name, description, username))
-            entityManager.flush()
-
-        then: "fails"
-            result == null
-            thrown NullPointerException
-
-        where: "input is invalid"
-            problem            | name                                        | description                                         | username
-            "name is null"     | null                                        | ActivityDescription.from(faker.lorem().paragraph()) | UserId.from(faker.name().username())
-            "username is null" | ActivityName.from(faker.lorem().sentence()) | ActivityDescription.from(faker.lorem().paragraph()) | null
-    }
 
     def "should retrieve an activity entity created by the same user"() {
         given: "an activity saved by a user"
             def aUser = UserId.from(faker.name().username())
-            def activityOfUser = activityRepository.save(Activity.from(ActivityName.from(faker.lorem().sentence()), ActivityDescription.from(faker.lorem().paragraph()), aUser))
+            def activityOfUser = activityRepository.save(givenActivity(aUser))
             entityManager.flush()
 
         expect: "the activity entity is retrieved for the same user"
@@ -71,7 +55,7 @@ class ActivityRepositorySpec extends IntegrationSpecification {
     def "should retrieve an activity details created by the same user"() {
         given: "an activity saved by a user"
             def aUser = UserId.from(faker.name().username())
-            def activityOfUser = activityRepository.save(Activity.from(ActivityName.from(faker.lorem().sentence()), ActivityDescription.from(faker.lorem().paragraph()), aUser))
+            def activityOfUser = activityRepository.save(givenActivity(aUser))
             entityManager.flush()
 
         expect: "the activity details is retrieved for the same user"
@@ -85,7 +69,7 @@ class ActivityRepositorySpec extends IntegrationSpecification {
     def "should not retrieve an activity created by another user"() {
         given: "an activity saved by a user"
             def aUser = UserId.from(faker.name().username())
-            def activityOfUser = activityRepository.save(Activity.from(ActivityName.from(faker.lorem().sentence()), ActivityDescription.from(faker.lorem().paragraph()), aUser))
+            def activityOfUser = activityRepository.save(givenActivity(aUser))
 
         when: "another user tries to retrieve the activity"
             def result = activityRepository.findByIdAndOwnerId(activityOfUser.id, UserId.from("anotherUser"))
@@ -97,13 +81,13 @@ class ActivityRepositorySpec extends IntegrationSpecification {
     def "should retrieve all activities of the given user only"() {
         given: "some activities which belong to user"
             def aUser = UserId.from("user")
-            def activity1OfUser = activityRepository.save(Activity.from(ActivityName.from(faker.lorem().sentence()), ActivityDescription.from(faker.lorem().paragraph()), aUser))
-            def activity2OfUser = activityRepository.save(Activity.from(ActivityName.from(faker.lorem().sentence()), ActivityDescription.from(faker.lorem().paragraph()), aUser))
-            def activity3OfUser = activityRepository.save(Activity.from(ActivityName.from(faker.lorem().sentence()), ActivityDescription.from(faker.lorem().paragraph()), aUser))
+            def activity1OfUser = activityRepository.save(givenActivity(aUser))
+            def activity2OfUser = activityRepository.save(givenActivity(aUser))
+            def activity3OfUser = activityRepository.save(givenActivity(aUser))
 
         and: "some activities which belong to another user"
             def anotherUser = UserId.from("anotherUser")
-            def activity1OfAnotherUser = activityRepository.save(Activity.from(ActivityName.from(faker.lorem().sentence()), ActivityDescription.from(faker.lorem().paragraph()), anotherUser))
+            def activity1OfAnotherUser = activityRepository.save(givenActivity(anotherUser))
 
         expect: "all activities which belong to the user are retrieved"
             def activitiesOfUser = activityRepository.findAllByOwnerId(aUser)
@@ -113,23 +97,18 @@ class ActivityRepositorySpec extends IntegrationSpecification {
             activitiesOfUser*.id.every { it != activity1OfAnotherUser.id }
     }
 
-    def "should add a resource to an activity"() {
-        given: "valid input"
+    def "should inform the activity can be found for the given user id"() {
+        given: "some activities which belong to user"
             def aUser = UserId.from("user")
-            def activity = activityRepository.save(Activity.from(ActivityName.from(faker.lorem().sentence()), ActivityDescription.from(faker.lorem().paragraph()), aUser))
-            def resource = resourceRepository.save(Resource.from(ResourceName.from(faker.lorem().sentence()), ResourceDescription.from(faker.lorem().paragraph()), ResourceQuantityUnit.Item, aUser))
-            def qty = faker.number().randomDigitNotZero()
-        when: "resource is added to activity"
-            activity.addResource(resource, qty)
-            activityRepository.save(activity)
-            entityManager.flush()
-            entityManager.clear()
+            def activityOfUser = activityRepository.save(givenActivity(aUser))
+            def anotherUser = UserId.from("anotherUser")
+            def activityOfAnotherUser = activityRepository.save(givenActivity(anotherUser))
+        when: "activities existences is checked for user"
+            def userActivityExistsForUser = activityRepository.existsByIdAndOwnerId(activityOfUser.id, aUser)
+            def anotherUserActivityExistsForUser = activityRepository.existsByIdAndOwnerId(activityOfAnotherUser.id, aUser)
+        then: "activity which belongs to user is found, the one which belongs to another user is not"
+            userActivityExistsForUser
+            !anotherUserActivityExistsForUser
 
-        then: "activity with relation to resource is saved"
-            def activityWithResource = activityRepository.findByIdAndOwnerId(activity.id, activity.ownerId)
-            activityWithResource.isPresent()
-            activityWithResource.get().resources.size() == 1
-            activityWithResource.get().resources[0].resource.id == resource.id
-            activityWithResource.get().resources[0].quantity == qty
     }
 }

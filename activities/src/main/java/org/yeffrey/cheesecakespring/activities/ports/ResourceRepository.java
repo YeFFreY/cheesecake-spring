@@ -2,6 +2,7 @@ package org.yeffrey.cheesecakespring.activities.ports;
 
 import org.yeffrey.cheesecakespring.activities.domain.Resource;
 import org.yeffrey.cheesecakespring.activities.domain.UserId;
+import org.yeffrey.cheesecakespring.activities.dto.ActivityResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceOverview;
 
@@ -16,4 +17,6 @@ public interface ResourceRepository {
     Optional<Resource> findByIdAndOwnerId(long id, UserId ownerId);
 
     List<ResourceOverview> findAllByOwnerId(UserId ownerId);
+
+    List<ActivityResourceDetails> findAllByActivityIdAndOwnerId(Long activityId, UserId userId);
 }

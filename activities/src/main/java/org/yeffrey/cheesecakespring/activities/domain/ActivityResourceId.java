@@ -21,21 +21,8 @@ public class ActivityResourceId implements Serializable {
         this.resourceId = resourceId;
     }
 
-
-    public Long getActivityId() {
-        return activityId;
-    }
-
-    public void setActivityId(Long activityId) {
-        this.activityId = activityId;
-    }
-
     public Long getResourceId() {
         return resourceId;
-    }
-
-    public void setResourceId(Long resourceId) {
-        this.resourceId = resourceId;
     }
 
     @Override

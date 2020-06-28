@@ -2,9 +2,9 @@ package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
+import org.yeffrey.cheesecakespring.infrastructure.web.rest.ListResourceModelAssembler;
 
 import java.util.Objects;
 
@@ -12,7 +12,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-class ActivityOverviewModelAssembler implements SimpleRepresentationModelAssembler<ActivityOverview> {
+class ActivityOverviewModelAssembler implements ListResourceModelAssembler<ActivityOverview> {
 
     @Override
     public void addLinks(EntityModel<ActivityOverview> resource) {

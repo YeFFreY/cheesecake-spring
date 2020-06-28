@@ -1,6 +1,5 @@
 package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities;
 
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +9,8 @@ import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateResourceCommand;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceOverview;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/resources")
@@ -39,8 +40,8 @@ public class ResourcesController {
     }
 
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<ResourceOverview>>> list() {
-        return ResponseEntity.ok(resourceOverviewModelAssembler.toCollectionModel(this.resourceStories.list()));
+    public ResponseEntity<List<EntityModel<ResourceOverview>>> list() {
+        return ResponseEntity.ok(resourceOverviewModelAssembler.toList(this.resourceStories.list()));
     }
 
     @PutMapping("/{id}")

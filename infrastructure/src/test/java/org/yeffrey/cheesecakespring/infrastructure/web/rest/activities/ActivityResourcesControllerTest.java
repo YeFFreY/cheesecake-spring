@@ -9,13 +9,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.yeffrey.cheesecakespring.activities.dto.AddResourceToActivityCommand;
 import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateActivityCommand;
+import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateResourceCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
-import org.yeffrey.cheesecakespring.infrastructure.web.rest.utils.JsonTestUtils;
 
 import javax.transaction.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("integration")
 @AutoConfigureMockMvc
 @Transactional
-class ActivityResourcesControllerTest implements ActivitiesEndpoint {
+class ActivityResourcesControllerTest implements ActivitiesEndpoint, ResourcesEndpoint, ActivityResourcesEndpoint {
     Faker faker = new Faker();
 
     @Autowired
@@ -42,27 +45,63 @@ class ActivityResourcesControllerTest implements ActivitiesEndpoint {
         return this.mapper;
     }
 
-    private CreateUpdateActivityCommand givenACreateUpdateCommand() {
+    // FIXME Move this (and those in other controllers) in super class
+    private CreateUpdateActivityCommand givenNewActivityCommand() {
         return new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph());
+    }
+
+    private CreateUpdateResourceCommand givenNewResourceCommand() {
+        return new CreateUpdateResourceCommand(faker.lorem().sentence(), faker.lorem().paragraph(), "Item");
     }
 
     @Test
     @WithMockUser
     public void userCanAddResourceToExistingActivity() throws Exception {
-        CreateUpdateActivityCommand command = givenACreateUpdateCommand();
-        EntityId entityId = newActivity(command);
-        assertThat(entityId).isNotNull();
+        EntityId activityId = newActivity(givenNewActivityCommand());
+        EntityId resourceId = newResource(givenNewResourceCommand());
 
-        showActivity(entityId)
+        var cmd = new AddResourceToActivityCommand(resourceId.getId(), faker.number().randomDigitNotZero());
+        addActivityResource(activityId, cmd)
+            .andExpect(status().isCreated());
+
+        showActivityResources(activityId)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(entityId.getId()))
-            .andExpect(jsonPath("$.name").value(command.name))
-            .andExpect(jsonPath("$.description").value(command.description))
-            .andExpect(JsonTestUtils.hasLinksCount(2))
-            .andExpect(JsonTestUtils.hasLink("self"))
-            .andExpect(JsonTestUtils.hasLink("update"));
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(cmd.resourceId.intValue())))
+            .andExpect(jsonPath("$[*].quantity", containsInAnyOrder(cmd.quantity)))
+            .andDo(print());
+    }
 
+    @Test
+    @WithMockUser
+    public void userCannotAddResourceToActivityFromAnotherUser() throws Exception {
+        EntityId activityId = newActivity(givenNewActivityCommand());
+        EntityId resourceId = newResource(givenNewResourceCommand());
+
+        var cmd = new AddResourceToActivityCommand(resourceId.getId(), faker.number().randomDigitNotZero());
+        addActivityResource(activityId, cmd, "anotherUser")
+            .andExpect(status().isNotFound());
+
+        showActivityResources(activityId)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(0)))
+            .andDo(print());
     }
 
 
+    @Test
+    @WithMockUser
+    public void userCannotAddHisResourceToActivityFromAnotherUser() throws Exception {
+        EntityId activityId = newActivity(givenNewActivityCommand());
+        EntityId resourceId = newResource(givenNewResourceCommand(), "anotherUser");
+
+        var cmd = new AddResourceToActivityCommand(resourceId.getId(), faker.number().randomDigitNotZero());
+        addActivityResource(activityId, cmd, "anotherUser")
+            .andExpect(status().isNotFound());
+
+        showActivityResources(activityId)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(0)))
+            .andDo(print());
+    }
 }

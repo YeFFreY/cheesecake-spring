@@ -37,4 +37,9 @@ public class ActivityRepositoryAdapter implements ActivityRepository {
     public List<ActivityOverview> findAllByOwnerId(UserId ownerId) {
         return this.activityRepositoryJpa.findAllByOwnerId(ownerId);
     }
+
+    @Override
+    public boolean existsByIdAndOwnerId(Long id, UserId ownerId) {
+        return this.activityRepositoryJpa.existsByIdAndOwnerId(id, ownerId);
+    }
 }

@@ -25,9 +25,10 @@ public class Activity extends OwnedDomain {
     @OneToMany(
         mappedBy = "activity",
         cascade = CascadeType.ALL,
-        orphanRemoval = true
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
     )
-    private Set<ActivityResource> resources = new HashSet<>();
+    private Set<ActivityResource> resources = new HashSet<>(5);
 
     protected Activity() {
         super(UserId.system());
@@ -46,6 +47,9 @@ public class Activity extends OwnedDomain {
     }
 
     public boolean addResource(Resource resource, int quantity) {
+        if (!resource.belongsTo(this.ownerId)) {
+            return false;
+        }
         ActivityResource activityResource = ActivityResource.from(this, resource, quantity);
         return this.resources.add(activityResource);
     }
@@ -70,6 +74,6 @@ public class Activity extends OwnedDomain {
     }
 
     public Set<ActivityResource> getResources() {
-        return this.resources;
+        return Set.copyOf(this.resources);
     }
 }

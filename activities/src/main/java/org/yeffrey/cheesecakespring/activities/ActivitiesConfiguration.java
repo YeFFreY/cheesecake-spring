@@ -7,7 +7,7 @@ import org.yeffrey.cheesecakespring.activities.ports.*;
 @Configuration
 class ActivitiesConfiguration {
     ActivityStories activityStories(AuthenticatedUserService authenticatedUserService) {
-        return activityStories(new ActivityRepositoryInMemory(), authenticatedUserService);
+        return activityStories(ActivityRepositoryInMemory.instance(), authenticatedUserService);
     }
 
     @Bean
@@ -18,7 +18,7 @@ class ActivitiesConfiguration {
     }
 
     ResourceStories resourceStories(AuthenticatedUserService authenticatedUserService) {
-        return resourceStories(new ResourceRepositoryInMemory(), authenticatedUserService);
+        return resourceStories(ResourceRepositoryInMemory.instance(), authenticatedUserService);
     }
 
     @Bean
@@ -26,6 +26,15 @@ class ActivitiesConfiguration {
         return new ResourceStories(
             resourceRepository,
             authenticatedUserService);
+    }
+
+    ActivityResourceStories activityResourceStories(AuthenticatedUserService authenticatedUserService) {
+        return new ActivityResourceStories(ActivityRepositoryInMemory.instance(), ResourceRepositoryInMemory.instance(), authenticatedUserService);
+    }
+
+    @Bean
+    ActivityResourceStories activityResourceStories(ActivityRepository activityRepository, ResourceRepository resourceRepository, AuthenticatedUserService authenticatedUserService) {
+        return new ActivityResourceStories(activityRepository, resourceRepository, authenticatedUserService);
     }
 
     // https://www.baeldung.com/spring-enum-request-param

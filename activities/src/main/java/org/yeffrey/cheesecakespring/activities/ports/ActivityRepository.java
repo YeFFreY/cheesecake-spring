@@ -16,4 +16,6 @@ public interface ActivityRepository {
     Optional<Activity> findByIdAndOwnerId(long id, UserId ownerId);
 
     List<ActivityOverview> findAllByOwnerId(UserId ownerId);
+
+    boolean existsByIdAndOwnerId(Long id, UserId ownerId);
 }
