@@ -21,6 +21,52 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
             activity.getResources()[0].quantity == qty
     }
 
+    def "a resource may be removed from activity"() {
+        given: "an activity which has two resource"
+            def aUser = UserId.from(faker.name().username())
+            def resource = givenResource(aUser)
+            def otherResource = givenResource(aUser)
+            def activity = givenActivity(aUser)
+            activity.addResource(resource, faker.number().randomDigitNotZero())
+            activity.addResource(otherResource, faker.number().randomDigitNotZero())
+            activity.resources.size() == 2
+        when: "resource is removed from activity"
+            def removed = activity.removeResource(resource)
+        then: "activity has one resource"
+            removed
+            activity.resources.size() == 1
+            activity.resources[0].resource == otherResource
+    }
+
+    def "a resource of another user cannot be added to activity"() {
+        given: "an activity which has two resource"
+            def aUser = UserId.from(faker.name().username())
+            def anotherUser = UserId.from(faker.name().username())
+            def resource = givenResource(anotherUser)
+            def activity = givenActivity(aUser)
+        when: "resource is removed from activity"
+            def added = activity.addResource(resource, faker.number().randomDigitNotZero())
+        then: "activity has one resource"
+            !added
+            activity.resources.size() == 0
+    }
+
+    def "a resource not associated with an activity cannot be not removed from activity"() {
+        given: "an activity which has two resource"
+            def aUser = UserId.from(faker.name().username())
+            def resource = givenResource(aUser)
+            def otherResource = givenResource(aUser)
+            def activity = givenActivity(aUser)
+            activity.addResource(resource, faker.number().randomDigitNotZero())
+            activity.resources.size() == 1
+        when: "resource is removed from activity"
+            def removed = activity.removeResource(otherResource)
+        then: "activity has one resource"
+            !removed
+            activity.resources.size() == 1
+            activity.resources[0].resource == resource
+    }
+
     def "an activity must not add resource already added to activity"() {
         given: "an activity and a resource"
             def aUser = UserId.from(faker.name().username())

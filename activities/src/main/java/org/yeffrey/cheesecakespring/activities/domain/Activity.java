@@ -22,6 +22,7 @@ public class Activity extends OwnedDomain {
     private ActivityDescription description;
 
 
+    /* FIXME Should this list become an object by itself so it can have internal method to check duplicates, and other validatiosn that would live inside it instead of the activity ?*/
     @OneToMany(
         mappedBy = "activity",
         cascade = CascadeType.ALL,
@@ -47,11 +48,17 @@ public class Activity extends OwnedDomain {
     }
 
     public boolean addResource(Resource resource, int quantity) {
+        checkNotNull(resource);
         if (!resource.belongsTo(this.ownerId)) {
             return false;
         }
         ActivityResource activityResource = ActivityResource.from(this, resource, quantity);
         return this.resources.add(activityResource);
+    }
+
+    public boolean removeResource(Resource resource) {
+        checkNotNull(resource);
+        return this.resources.removeIf(activityResource -> activityResource.getResource().equals(resource));
     }
 
     public Activity updateDetails(ActivityName name, ActivityDescription description) {
@@ -76,4 +83,5 @@ public class Activity extends OwnedDomain {
     public Set<ActivityResource> getResources() {
         return Set.copyOf(this.resources);
     }
+
 }
