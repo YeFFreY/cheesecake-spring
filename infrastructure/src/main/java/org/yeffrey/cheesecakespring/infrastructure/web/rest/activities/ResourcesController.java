@@ -9,6 +9,8 @@ import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateResourceCommand;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceOverview;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
+import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.assemblers.ResourceDetailsModelAssembler;
+import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.assemblers.ResourceOverviewModelAssembler;
 
 import java.util.List;
 

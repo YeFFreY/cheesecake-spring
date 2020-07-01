@@ -42,7 +42,7 @@ class ActivityRepositorySpec extends IntegrationSpecification implements DomainS
         given: "an activity saved by a user"
             def aUser = UserId.from(faker.name().username())
             def activityOfUser = activityRepository.save(givenActivity(aUser))
-            entityManager.flush()
+            flushAndClear()
 
         expect: "the activity entity is retrieved for the same user"
             def result = activityRepository.findByIdAndOwnerId(activityOfUser.id, aUser)
@@ -56,7 +56,7 @@ class ActivityRepositorySpec extends IntegrationSpecification implements DomainS
         given: "an activity saved by a user"
             def aUser = UserId.from(faker.name().username())
             def activityOfUser = activityRepository.save(givenActivity(aUser))
-            entityManager.flush()
+            flushAndClear()
 
         expect: "the activity details is retrieved for the same user"
             def result = activityRepository.findDetailsByIdAndOwnerId(activityOfUser.id, aUser)

@@ -9,6 +9,8 @@ import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
 import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
+import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.assemblers.ActivityDetailsModelAssembler;
+import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.assemblers.ActivityOverviewModelAssembler;
 
 import javax.validation.Valid;
 import java.util.List;

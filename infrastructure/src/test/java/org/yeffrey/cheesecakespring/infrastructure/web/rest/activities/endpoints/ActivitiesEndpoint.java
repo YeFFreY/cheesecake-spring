@@ -1,11 +1,11 @@
-package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities;
+package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateResourceCommand;
+import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
 
 import javax.annotation.Nullable;
@@ -15,15 +15,15 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public interface ResourcesEndpoint {
+public interface ActivitiesEndpoint {
 
     MockMvc getMvc();
 
     ObjectMapper getMapper();
 
 
-    default EntityId newResource(CreateUpdateResourceCommand command, @Nullable String userId) throws Exception {
-        MockHttpServletRequestBuilder post = post("/api/resources");
+    default EntityId newActivity(CreateUpdateActivityCommand command, @Nullable String userId) throws Exception {
+        MockHttpServletRequestBuilder post = post("/api/activities");
 
         if (Objects.nonNull(userId)) {
             post = post.with(user(userId));
@@ -39,27 +39,27 @@ public interface ResourcesEndpoint {
         return getMapper().readValue(response, EntityId.class);
     }
 
-    default EntityId newResource(CreateUpdateResourceCommand command) throws Exception {
-        return this.newResource(command, null);
+    default EntityId newActivity(CreateUpdateActivityCommand command) throws Exception {
+        return this.newActivity(command, null);
     }
 
-    default ResultActions showResource(EntityId entityId) throws Exception {
-        return getMvc().perform(get("/api/resources/{id}", entityId.getId())
+    default ResultActions showActivity(EntityId entityId) throws Exception {
+        return getMvc().perform(get("/api/activities/{id}", entityId.getId())
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON));
 
     }
 
-    default ResultActions showResources() throws Exception {
-        return getMvc().perform(get("/api/resources")
+    default ResultActions showActivities() throws Exception {
+        return getMvc().perform(get("/api/activities")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
 
 
-    default void updateResource(EntityId entityId, CreateUpdateResourceCommand command) throws Exception {
-        getMvc().perform(put("/api/resources/{id}", entityId.getId())
+    default void updateActivity(EntityId entityId, CreateUpdateActivityCommand command) throws Exception {
+        getMvc().perform(put("/api/activities/{id}", entityId.getId())
                              .content(getMapper().writeValueAsString(command))
                              .contentType(MediaType.APPLICATION_JSON)
                              .accept(MediaType.APPLICATION_JSON))

@@ -1,4 +1,4 @@
-package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities;
+package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
@@ -12,8 +12,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 public interface ActivityResourcesEndpoint {
 
@@ -36,6 +35,21 @@ public interface ActivityResourcesEndpoint {
 
     default ResultActions addActivityResource(EntityId entityId, AddResourceToActivityCommand command) throws Exception {
         return addActivityResource(entityId, command, null);
+    }
+
+    default ResultActions removeActivityResource(EntityId activityId, EntityId resourceId, @Nullable String userId) throws Exception {
+        MockHttpServletRequestBuilder delete = delete("/api/activities/{id}/resources/{resourceId}", activityId.getId(), resourceId.getId());
+
+        if (Objects.nonNull(userId)) {
+            delete = delete.with(user(userId));
+        }
+
+        return getMvc().perform(delete.contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON));
+    }
+
+    default ResultActions removeActivityResource(EntityId activityId, EntityId resourceId) throws Exception {
+        return removeActivityResource(activityId, resourceId, null);
     }
 
     default ResultActions showActivityResources(EntityId entityId) throws Exception {

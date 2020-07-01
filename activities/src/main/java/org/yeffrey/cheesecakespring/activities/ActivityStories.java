@@ -40,6 +40,7 @@ public class ActivityStories {
             .flatMap(userId -> activityRepository.findDetailsByIdAndOwnerId(id, userId));
     }
 
+    @Transactional
     public void updateActivity(Long id, CreateUpdateActivityCommand command) {
         UserId userId = this.authenticatedUserService.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
 

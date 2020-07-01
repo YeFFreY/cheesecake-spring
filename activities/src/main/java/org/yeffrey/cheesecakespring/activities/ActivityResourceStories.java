@@ -26,6 +26,7 @@ public class ActivityResourceStories {
         this.authenticatedUserService = authenticatedUserService;
     }
 
+    @Transactional
     public boolean activityRequiresResource(Long activityId, AddResourceToActivityCommand command) {
         UserId userId = this.authenticatedUserService.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
         Activity activity = activityRepository.findByIdAndOwnerId(activityId, userId).orElseThrow(ResourceNotFoundException::new);
@@ -40,5 +41,13 @@ public class ActivityResourceStories {
         } else {
             throw new ResourceNotFoundException();
         }
+    }
+
+    @Transactional
+    public boolean resourceNotRequiredAnymore(Long activityId, Long resourceId) {
+        UserId userId = this.authenticatedUserService.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
+        Activity activity = activityRepository.findByIdAndOwnerId(activityId, userId).orElseThrow(ResourceNotFoundException::new);
+        Resource resource = resourceRepository.findByIdAndOwnerId(resourceId, userId).orElseThrow(ResourceNotFoundException::new);
+        return activity.removeResource(resource);
     }
 }

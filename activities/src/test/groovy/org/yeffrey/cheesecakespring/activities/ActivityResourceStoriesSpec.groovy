@@ -86,4 +86,23 @@ class ActivityResourceStoriesSpec extends BaseSpecification {
 
     }
 
+    def "A resource can be removed from an activity"() {
+        given: "an authenticated user"
+            authenticatedService.getAuthenticatedUserId() >> aUser
+
+        and: "an activity with a resource"
+            def activityId = activityStories.registerActivity(newActivityCommand())
+            def resourceId = resourceStories.registerResource(newResourceCommand())
+            def cmd = newActivityResourceCommand(resourceId)
+            activityResourceStories.activityRequiresResource(activityId, cmd)
+
+        when: "the resource is removed from the activity"
+            def removed = activityResourceStories.resourceNotRequiredAnymore(activityId, resourceId)
+
+        then: "activity has only a single resource with unchanged qties"
+            removed
+            def activityResources = activityResourceStories.findActivityResources(activityId)
+            activityResources.size() == 0
+
+    }
 }

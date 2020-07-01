@@ -37,6 +37,7 @@ public class ResourceStories {
             .flatMap(userId -> resourceRepository.findDetailsByIdAndOwnerId(id, userId));
     }
 
+    @Transactional
     public void updateResource(Long id, CreateUpdateResourceCommand command) {
         UserId userId = this.authenticatedUserService.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
 
