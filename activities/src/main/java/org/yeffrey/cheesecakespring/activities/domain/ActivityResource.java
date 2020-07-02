@@ -25,18 +25,19 @@ public class ActivityResource {
     protected ActivityResource() {
     }
 
-    private ActivityResource(Activity activity, Resource resource, int quantity) {
+    private ActivityResource(Activity activity, Resource resource) {
         this.activity = activity;
         this.resource = resource;
-        this.quantity = quantity;
+        this.quantity = 1;
         this.id = new ActivityResourceId(activity.getId(), resource.getId());
     }
 
     public static ActivityResource from(Activity activity, Resource resource, int quantity) {
         Preconditions.checkNotNull(activity);
         Preconditions.checkNotNull(resource);
-        Preconditions.checkArgument(quantity > 0);
-        return new ActivityResource(activity, resource, quantity);
+        final ActivityResource activityResource = new ActivityResource(activity, resource);
+        activityResource.setQuantity(quantity);
+        return activityResource;
     }
 
     protected Activity getActivity() {
@@ -49,6 +50,11 @@ public class ActivityResource {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    void setQuantity(int quantity) {
+        Preconditions.checkArgument(quantity > 0);
+        this.quantity = quantity;
     }
 
     @Override

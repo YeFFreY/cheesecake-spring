@@ -84,4 +84,11 @@ public class Activity extends OwnedDomain {
         return Set.copyOf(this.resources);
     }
 
+
+    public void updateResource(Resource resource, int newQuantity) {
+        this.resources.stream()
+            .filter(ar -> ar.getResource().equals(resource))
+            .findFirst()
+            .ifPresent(ar -> ar.setQuantity(newQuantity));
+    }
 }

@@ -5,6 +5,44 @@ import spock.lang.Unroll
 
 class ActivitySpec extends BaseSpecification implements DomainSamples {
 
+    @Unroll
+    def "should refuse to create a new activity because #problem"() {
+        when: "creating an activity"
+            Activity.from(name, null, username)
+
+        then: "fails"
+            thrown NullPointerException
+
+        where: "input is invalid"
+            problem            | name                                        | username
+            "name is null"     | null                                        | UserId.from(faker.name().username())
+            "username is null" | ActivityName.from(faker.lorem().sentence()) | null
+    }
+
+    def "should refuse to update an activity name with null"() {
+        given: "an existing activity"
+            def activity = givenActivity()
+        when: "update an activity"
+            activity.updateDetails(null, ActivityDescription.from(faker.lorem().paragraph()))
+
+        then: "fails"
+            thrown NullPointerException
+    }
+
+    def "update an activity description with null is valid"() {
+        given: "an existing activity"
+            def activity = givenActivity()
+        when: "update an activity"
+            activity.updateDetails(ActivityName.from(faker.lorem().sentence()), null)
+
+        then: "fails"
+            activity.description == null
+    }
+
+    /***********************************************************************
+     Activity Resources
+     ***********************************************************************/
+
     def "an activity may require resource material"() {
         given: "an activity and a resource"
             def aUser = UserId.from(faker.name().username())
@@ -19,6 +57,23 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
             activity.getResources()[0].activity == activity
             activity.getResources()[0].resource == resource
             activity.getResources()[0].quantity == qty
+    }
+
+    def "an activity refuse resource material with zero or less quantity"() {
+        given: "an activity and a resource"
+            def aUser = UserId.from(faker.name().username())
+            def resource = givenResource(aUser)
+            def activity = givenActivity(aUser)
+        when: "a Resource with zero quantity is added to activity"
+            activity.addResource(resource, quantity)
+        then: "resource is refused"
+            thrown(IllegalArgumentException)
+            activity.getResources().size() == 0
+        where: "input is invalid"
+            problem                | quantity
+            "quantity is zero"     | 0
+            "quantity is negative" | faker.number().numberBetween(Integer.MIN_VALUE, -1)
+
     }
 
     def "a resource may be removed from activity"() {
@@ -84,37 +139,63 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
             activity.getResources()[0].quantity == qty
     }
 
-    @Unroll
-    def "should refuse to create a new activity because #problem"() {
-        when: "creating an activity"
-            Activity.from(name, null, username)
+    def "user can update an activity resource quantity"() {
+        given: "an activity and a resource"
+            def aUser = UserId.from(faker.name().username())
+            def resource = givenResource(aUser)
+            def anotherResource = givenResource(aUser)
+            def activity = givenActivity(aUser)
+            def initialQty = faker.number().randomDigitNotZero()
+            activity.addResource(resource, initialQty)
+            activity.addResource(anotherResource, initialQty)
+        when: "quantity of resource is updated"
+            def newQuantity = faker.number().randomDigitNotZero()
+            activity.updateResource(resource, newQuantity)
+        then: "Activity has updated quantity for the resource"
+            activity.resources.stream().anyMatch({ ar -> ar.quantity == newQuantity && ar.resource == resource })
+            activity.resources.stream().anyMatch({ ar -> ar.quantity == initialQty && ar.resource == anotherResource })
+    }
 
-        then: "fails"
-            thrown NullPointerException
+    def "user cannot update an activity resource quantity with zero or negative value"() {
+        given: "an activity and a resource"
+            def aUser = UserId.from(faker.name().username())
+            def activity = givenActivity(aUser)
+            def resource = givenResource(aUser)
+            def initialQty = faker.number().numberBetween(1, 150)
+            activity.addResource(resource, initialQty)
+
+        when: "quantity of resource is updated"
+            activity.updateResource(resource, newQuantity)
+
+        then: "Activity resource quantity is not updated"
+            thrown(IllegalArgumentException)
+            activity.resources.size() == 1
+            activity.resources.stream().anyMatch({ ar -> ar.quantity == initialQty && ar.resource == resource })
 
         where: "input is invalid"
-            problem            | name                                        | username
-            "name is null"     | null                                        | UserId.from(faker.name().username())
-            "username is null" | ActivityName.from(faker.lorem().sentence()) | null
+            problem                | newQuantity
+            "quantity is zero"     | 0
+            "quantity is negative" | faker.number().numberBetween(Integer.MIN_VALUE, -1)
+
     }
 
-    def "should refuse to update an activity name with null"() {
-        given: "an existing activity"
-            def activity = givenActivity()
-        when: "update an activity"
-            activity.updateDetails(null, ActivityDescription.from(faker.lorem().paragraph()))
-
-        then: "fails"
-            thrown NullPointerException
+    def "update a quantity of a resource not present in activity has no impact"() {
+        given: "an activity and a resource"
+            def aUser = UserId.from(faker.name().username())
+            def resource = givenResource(aUser)
+            def anotherResource = givenResource(aUser)
+            def resourceNotInActivity = givenResource(aUser)
+            def activity = givenActivity(aUser)
+            def initialQty = faker.number().randomDigitNotZero()
+            activity.addResource(resource, initialQty)
+            activity.addResource(anotherResource, initialQty)
+        when: "quantity of resource not in activity is updated"
+            def newQuantity = faker.number().randomDigitNotZero()
+            activity.updateResource(resourceNotInActivity, newQuantity)
+        then: "Activity resources have not been impacted"
+            activity.resources.size() == 2
+            activity.resources.stream().anyMatch({ ar -> ar.quantity == initialQty && ar.resource == resource })
+            activity.resources.stream().anyMatch({ ar -> ar.quantity == initialQty && ar.resource == anotherResource })
     }
 
-    def "update an activity description with null is valid"() {
-        given: "an existing activity"
-            def activity = givenActivity()
-        when: "update an activity"
-            activity.updateDetails(ActivityName.from(faker.lorem().sentence()), null)
-
-        then: "fails"
-            activity.description == null
-    }
 }
