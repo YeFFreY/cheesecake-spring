@@ -2,6 +2,7 @@ package org.yeffrey.cheesecakespring.activities
 
 import org.yeffrey.cheesecakespring.activities.core.ResourceNotFoundException
 import org.yeffrey.cheesecakespring.activities.dto.AddResourceToActivityCommand
+import org.yeffrey.cheesecakespring.activities.dto.AdjustActivityResourceQuantityCommand
 import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateActivityCommand
 import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateResourceCommand
 
@@ -22,6 +23,10 @@ class ActivityResourceStoriesSpec extends BaseSpecification {
 
     def newActivityResourceCommand(Long resourceId) {
         return new AddResourceToActivityCommand(resourceId, faker.number().randomDigitNotZero())
+    }
+
+    def newActivityResourceQuantityAdjustementCommand(Long resourceId) {
+        return new AdjustActivityResourceQuantityCommand(faker.number().randomDigitNotZero())
     }
 
 
@@ -99,10 +104,71 @@ class ActivityResourceStoriesSpec extends BaseSpecification {
         when: "the resource is removed from the activity"
             def removed = activityResourceStories.resourceNotRequiredAnymore(activityId, resourceId)
 
-        then: "activity has only a single resource with unchanged qties"
+        then: "activity has no more the resources"
             removed
             def activityResources = activityResourceStories.findActivityResources(activityId)
             activityResources.size() == 0
+    }
+
+    def "A resource cannot be removed from an activity by another user"() {
+        given: "an authenticated user and another user"
+            authenticatedService.getAuthenticatedUserId() >>> [aUser, aUser, aUser, anotherUser, aUser]
+
+        and: "an activity with a resource"
+            def activityId = activityStories.registerActivity(newActivityCommand())
+            def resourceId = resourceStories.registerResource(newResourceCommand())
+            def cmd = newActivityResourceCommand(resourceId)
+            activityResourceStories.activityRequiresResource(activityId, cmd)
+
+        when: "the resource is removed from the activity by another user"
+            def removed = activityResourceStories.resourceNotRequiredAnymore(activityId, resourceId)
+
+        then: "activity is not impacted and resource is still present"
+            thrown(ResourceNotFoundException) // because another user cannot see things of user
+            !removed
+            def activityResources = activityResourceStories.findActivityResources(activityId)
+            activityResources.size() == 1
+            activityResources[0].quantity == cmd.quantity
+            activityResources[0].id == cmd.resourceId
+    }
+
+    def "An activity resource can get its quantity updated"() {
+        given: "an authenticated user"
+            authenticatedService.getAuthenticatedUserId() >> aUser
+
+        and: "an activity with a resource"
+            def activityId = activityStories.registerActivity(newActivityCommand())
+            def resourceId = resourceStories.registerResource(newResourceCommand())
+            activityResourceStories.activityRequiresResource(activityId, newActivityResourceCommand(resourceId))
+
+        when: "a user updates the quantity"
+            def cmd = newActivityResourceQuantityAdjustementCommand()
+            def updated = activityResourceStories.adjustActivityResourceQuantity(activityId, resourceId, cmd)
+
+        then: "activity resource has its quantity updated"
+            updated
+            def activityResources = activityResourceStories.findActivityResources(activityId)
+            activityResources[0].quantity == cmd.quantity
+    }
+
+    def "An activity resource cannot get its quantity updated by another user"() {
+        given: "an authenticated user"
+            authenticatedService.getAuthenticatedUserId() >>> [aUser, aUser, aUser, anotherUser, aUser]
+
+        and: "an activity with a resource"
+            def activityId = activityStories.registerActivity(newActivityCommand())
+            def resourceId = resourceStories.registerResource(newResourceCommand())
+            def cmd = newActivityResourceCommand(resourceId)
+            activityResourceStories.activityRequiresResource(activityId, cmd)
+
+        when: "another user updates the quantity"
+            def updated = activityResourceStories.adjustActivityResourceQuantity(activityId, resourceId, newActivityResourceQuantityAdjustementCommand())
+
+        then: "activity resource has its initial quantity"
+            thrown(ResourceNotFoundException)
+            !updated
+            def activityResources = activityResourceStories.findActivityResources(activityId)
+            activityResources[0].quantity == cmd.quantity
 
     }
 }

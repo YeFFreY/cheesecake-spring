@@ -6,6 +6,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.yeffrey.cheesecakespring.activities.dto.AddResourceToActivityCommand;
+import org.yeffrey.cheesecakespring.activities.dto.AdjustActivityResourceQuantityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
 
 import javax.annotation.Nullable;
@@ -56,6 +57,22 @@ public interface ActivityResourcesEndpoint {
         return getMvc().perform(get("/api/activities/{id}/resources", entityId.getId())
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON));
-
     }
+
+    default ResultActions adjustActivityResourceQuantity(EntityId activityId, EntityId resourceId, AdjustActivityResourceQuantityCommand command) throws Exception {
+        return adjustActivityResourceQuantity(activityId, resourceId, command, null);
+    }
+
+    default ResultActions adjustActivityResourceQuantity(EntityId activityId, EntityId resourceId, AdjustActivityResourceQuantityCommand command, @Nullable String userId) throws Exception {
+        MockHttpServletRequestBuilder put = put("/api/activities/{id}/resources/{resourceId}", activityId.getId(), resourceId.getId());
+
+        if (Objects.nonNull(userId)) {
+            put = put.with(user(userId));
+        }
+
+        return getMvc().perform(put.content(getMapper().writeValueAsString(command))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON));
+    }
+
 }

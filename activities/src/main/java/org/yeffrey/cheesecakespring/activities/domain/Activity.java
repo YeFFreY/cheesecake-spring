@@ -85,10 +85,13 @@ public class Activity extends OwnedDomain {
     }
 
 
-    public void updateResource(Resource resource, int newQuantity) {
-        this.resources.stream()
+    public boolean updateResource(Resource resource, int newQuantity) {
+        return this.resources.stream()
             .filter(ar -> ar.getResource().equals(resource))
             .findFirst()
-            .ifPresent(ar -> ar.setQuantity(newQuantity));
+            .map(ar -> {
+                ar.setQuantity(newQuantity);
+                return true;
+            }).orElse(false);
     }
 }

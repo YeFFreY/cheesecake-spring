@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.yeffrey.cheesecakespring.activities.dto.AddResourceToActivityCommand;
+import org.yeffrey.cheesecakespring.activities.dto.AdjustActivityResourceQuantityCommand;
 import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateResourceCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
@@ -48,6 +49,14 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
 
     private CreateUpdateResourceCommand givenNewResourceCommand() {
         return new CreateUpdateResourceCommand(faker.lorem().sentence(), faker.lorem().paragraph(), "Item");
+    }
+
+    private AdjustActivityResourceQuantityCommand givenAdjustActivityResourceQtyCommand() {
+        return new AdjustActivityResourceQuantityCommand(faker.number().numberBetween(1, 100));
+    }
+
+    private AdjustActivityResourceQuantityCommand givenAdjustActivityResourceQtyCommandWithInvalidValue() {
+        return new AdjustActivityResourceQuantityCommand(-10);
     }
 
     @Test
@@ -152,5 +161,66 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
             .andExpect(jsonPath("$[*].id", containsInAnyOrder(cmd.resourceId.intValue())));
+    }
+
+    @Test
+    @WithMockUser
+    public void userCanUpdateResourceQuantityOfExistingActivity() throws Exception {
+        EntityId activityId = newActivity(givenNewActivityCommand());
+        EntityId resourceId = newResource(givenNewResourceCommand());
+
+        addActivityResource(activityId, new AddResourceToActivityCommand(resourceId.getId(), faker.number().randomDigitNotZero()))
+            .andExpect(status().isCreated());
+
+        var cmd = givenAdjustActivityResourceQtyCommand();
+        adjustActivityResourceQuantity(activityId, resourceId, cmd)
+            .andExpect(status().isOk());
+
+        showActivityResources(activityId)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(resourceId.getId().intValue())))
+            .andExpect(jsonPath("$[*].quantity", containsInAnyOrder(cmd.quantity)));
+    }
+
+    @Test
+    @WithMockUser
+    public void userCannotUpdateResourceQuantityOfExistingActivityWithInvalidQuantity() throws Exception {
+        EntityId activityId = newActivity(givenNewActivityCommand());
+        EntityId resourceId = newResource(givenNewResourceCommand());
+
+        int initialQuantity = faker.number().randomDigitNotZero();
+        addActivityResource(activityId, new AddResourceToActivityCommand(resourceId.getId(), initialQuantity))
+            .andExpect(status().isCreated());
+
+        adjustActivityResourceQuantity(activityId, resourceId, givenAdjustActivityResourceQtyCommandWithInvalidValue())
+            .andExpect(status().isBadRequest());
+
+        showActivityResources(activityId)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(resourceId.getId().intValue())))
+            .andExpect(jsonPath("$[*].quantity", containsInAnyOrder(initialQuantity)));
+    }
+
+    @Test
+    @WithMockUser
+    public void userCannotUpdateResourceQuantityOfAnotherUserActivity() throws Exception {
+        EntityId activityId = newActivity(givenNewActivityCommand());
+        EntityId resourceId = newResource(givenNewResourceCommand());
+
+        int initialQuantity = faker.number().randomDigitNotZero();
+        addActivityResource(activityId, new AddResourceToActivityCommand(resourceId.getId(), initialQuantity))
+            .andExpect(status().isCreated());
+
+        var cmd = givenAdjustActivityResourceQtyCommand();
+        adjustActivityResourceQuantity(activityId, resourceId, cmd, "anotherUser")
+            .andExpect(status().isNotFound());
+
+        showActivityResources(activityId)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(resourceId.getId().intValue())))
+            .andExpect(jsonPath("$[*].quantity", containsInAnyOrder(initialQuantity)));
     }
 }

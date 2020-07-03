@@ -8,6 +8,7 @@ import org.yeffrey.cheesecakespring.activities.domain.Resource;
 import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.AddResourceToActivityCommand;
+import org.yeffrey.cheesecakespring.activities.dto.AdjustActivityResourceQuantityCommand;
 import org.yeffrey.cheesecakespring.activities.ports.ActivityRepository;
 import org.yeffrey.cheesecakespring.activities.ports.AuthenticatedUserService;
 import org.yeffrey.cheesecakespring.activities.ports.ResourceRepository;
@@ -49,5 +50,13 @@ public class ActivityResourceStories {
         Activity activity = activityRepository.findByIdAndOwnerId(activityId, userId).orElseThrow(ResourceNotFoundException::new);
         Resource resource = resourceRepository.findByIdAndOwnerId(resourceId, userId).orElseThrow(ResourceNotFoundException::new);
         return activity.removeResource(resource);
+    }
+
+    @Transactional
+    public boolean adjustActivityResourceQuantity(Long activityId, Long resourceId, AdjustActivityResourceQuantityCommand command) {
+        UserId userId = this.authenticatedUserService.getAuthenticatedUserId().orElseThrow(AccessDeniedException::new);
+        Activity activity = activityRepository.findByIdAndOwnerId(activityId, userId).orElseThrow(ResourceNotFoundException::new);
+        Resource resource = resourceRepository.findByIdAndOwnerId(resourceId, userId).orElseThrow(ResourceNotFoundException::new);
+        return activity.updateResource(resource, command.quantity);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.yeffrey.cheesecakespring.activities.ActivityResourceStories;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.AddResourceToActivityCommand;
+import org.yeffrey.cheesecakespring.activities.dto.AdjustActivityResourceQuantityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.assemblers.ActivityResourceModelAssembler;
 
 import javax.validation.Valid;
@@ -40,6 +41,16 @@ public class ActivityResourcesController {
     @DeleteMapping("/{id}/resources/{resourceId}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id, @PathVariable("resourceId") Long resourceId) {
         if (activityResourceStories.resourceNotRequiredAnymore(id, resourceId)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/{id}/resources/{resourceId}")
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @PathVariable("resourceId") Long resourceId,
+                                       @Valid @RequestBody AdjustActivityResourceQuantityCommand command) {
+        if (this.activityResourceStories.adjustActivityResourceQuantity(id, resourceId, command)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.badRequest().build();
