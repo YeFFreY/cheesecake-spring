@@ -1,16 +1,16 @@
 package org.yeffrey.cheesecakespring.activities;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.yeffrey.cheesecakespring.activities.ports.*;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 class ActivitiesConfiguration {
     ActivityStories activityStories(AuthenticatedUserService authenticatedUserService) {
         return activityStories(ActivityRepositoryInMemory.instance(), authenticatedUserService);
     }
 
-    @Bean
     ActivityStories activityStories(ActivityRepository activityRepository, AuthenticatedUserService authenticatedUserService) {
         return new ActivityStories(
             activityRepository,
@@ -21,7 +21,6 @@ class ActivitiesConfiguration {
         return resourceStories(ResourceRepositoryInMemory.instance(), authenticatedUserService);
     }
 
-    @Bean
     ResourceStories resourceStories(ResourceRepository resourceRepository, AuthenticatedUserService authenticatedUserService) {
         return new ResourceStories(
             resourceRepository,
@@ -32,7 +31,6 @@ class ActivitiesConfiguration {
         return new ActivityResourceStories(ActivityRepositoryInMemory.instance(), ResourceRepositoryInMemory.instance(), authenticatedUserService);
     }
 
-    @Bean
     ActivityResourceStories activityResourceStories(ActivityRepository activityRepository, ResourceRepository resourceRepository, AuthenticatedUserService authenticatedUserService) {
         return new ActivityResourceStories(activityRepository, resourceRepository, authenticatedUserService);
     }

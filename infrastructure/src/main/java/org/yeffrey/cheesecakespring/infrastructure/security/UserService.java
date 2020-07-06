@@ -10,7 +10,7 @@ import java.security.Principal;
 import java.util.Optional;
 
 @Component
-public class AuthenticationService implements AuthenticatedUserService {
+public class UserService implements AuthenticatedUserService {
 
     public Optional<UserId> getAuthenticatedUserId() {
         return Optional.of(SecurityContextHolder.getContext())

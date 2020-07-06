@@ -1,5 +1,6 @@
 package org.yeffrey.cheesecakespring.activities;
 
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yeffrey.cheesecakespring.activities.core.AccessDeniedException;
 import org.yeffrey.cheesecakespring.activities.core.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import org.yeffrey.cheesecakespring.activities.ports.ResourceRepository;
 
 import java.util.List;
 
+@Service
 @Transactional(readOnly = true)
 public class ActivityResourceStories {
     private final ActivityRepository activityRepository;

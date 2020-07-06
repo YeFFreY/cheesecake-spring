@@ -1,5 +1,6 @@
 package org.yeffrey.cheesecakespring.activities;
 
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yeffrey.cheesecakespring.activities.core.AccessDeniedException;
 import org.yeffrey.cheesecakespring.activities.domain.*;
@@ -12,7 +13,7 @@ import org.yeffrey.cheesecakespring.activities.ports.ResourceRepository;
 import java.util.List;
 import java.util.Optional;
 
-//@Service // On essaie de le constuire uniquement dans la config, est-ce que Transactional fonctionnera ?
+@Service
 @Transactional(readOnly = true)
 public class ResourceStories {
 
