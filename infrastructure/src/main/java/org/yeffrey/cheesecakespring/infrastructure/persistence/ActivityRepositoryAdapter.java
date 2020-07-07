@@ -2,7 +2,6 @@ package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
 import org.springframework.stereotype.Repository;
 import org.yeffrey.cheesecakespring.activities.domain.Activity;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
 import org.yeffrey.cheesecakespring.activities.ports.ActivityRepository;
@@ -24,22 +23,22 @@ public class ActivityRepositoryAdapter implements ActivityRepository {
     }
 
     @Override
-    public Optional<ActivityDetails> findDetailsByIdAndOwnerId(Long id, UserId ownerId) {
-        return this.activityRepositoryJpa.findDetailsByIdAndOwnerId(id, ownerId);
+    public Optional<ActivityDetails> findDetailsById(Long id) {
+        return this.activityRepositoryJpa.findDetailsById(id);
     }
 
     @Override
-    public Optional<Activity> findByIdAndOwnerId(long id, UserId ownerId) {
-        return this.activityRepositoryJpa.findByIdAndOwnerId(id, ownerId);
+    public Optional<Activity> findById(long id) {
+        return this.activityRepositoryJpa.findById(id);
     }
 
     @Override
-    public List<ActivityOverview> findAllByOwnerId(UserId ownerId) {
-        return this.activityRepositoryJpa.findAllByOwnerId(ownerId);
+    public List<ActivityOverview> findAll() {
+        return this.activityRepositoryJpa.findOverviewBy();
     }
 
     @Override
-    public boolean existsByIdAndOwnerId(Long id, UserId ownerId) {
-        return this.activityRepositoryJpa.existsByIdAndOwnerId(id, ownerId);
+    public boolean existsById(Long id) {
+        return this.activityRepositoryJpa.existsById(id);
     }
 }

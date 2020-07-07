@@ -9,29 +9,26 @@ class ResourceSpec extends BaseSpecification implements DomainSamples {
         given: "some input"
             def name = ResourceName.from(faker.lorem().sentence())
             def description = ResourceDescription.from(faker.lorem().paragraph())
-            def username = UserId.from(faker.name().username())
             def qtyUnit = ResourceQuantityUnit.Item
         expect: "a resource has a quantity unit"
-            def resource = Resource.from(name, description, qtyUnit, username)
+            def resource = Resource.from(name, description, qtyUnit)
             resource.name == name
             resource.description == description
-            resource.belongsTo(username)
             resource.quantityUnit == qtyUnit
     }
 
     @Unroll
     def "should refuse to create a new resource because #problem"() {
         when: "creating an resource"
-            Resource.from(name, null, qtyUnit, username)
+            Resource.from(name, null, qtyUnit)
 
         then: "fails"
             thrown NullPointerException
 
         where: "input is invalid"
-            problem            | name                                        | username                             | qtyUnit
-            "name is null"     | null                                        | UserId.from(faker.name().username()) | ResourceQuantityUnit.Item
-            "qtyUnit is null"  | ResourceName.from(faker.lorem().sentence()) | UserId.from(faker.name().username()) | null
-            "username is null" | ResourceName.from(faker.lorem().sentence()) | null                                 | ResourceQuantityUnit.Item
+            problem           | name                                        | qtyUnit
+            "name is null"    | null                                        | ResourceQuantityUnit.Item
+            "qtyUnit is null" | ResourceName.from(faker.lorem().sentence()) | null
     }
 
     @Unroll

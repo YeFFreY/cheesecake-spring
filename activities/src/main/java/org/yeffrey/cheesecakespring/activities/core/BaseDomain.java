@@ -19,8 +19,7 @@ public abstract class BaseDomain implements Serializable {
 
     @Override
     public boolean equals(Object that) {
-        return this == that
-            || that instanceof BaseDomain && Objects.equals(uuid, ((BaseDomain) that).uuid);
+        return this == that || (that instanceof BaseDomain && Objects.equals(uuid, ((BaseDomain) that).uuid));
     }
 
     @Override

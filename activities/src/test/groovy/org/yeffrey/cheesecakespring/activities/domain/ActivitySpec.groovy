@@ -8,15 +8,14 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
     @Unroll
     def "should refuse to create a new activity because #problem"() {
         when: "creating an activity"
-            Activity.from(name, null, username)
+            Activity.from(name, null)
 
         then: "fails"
             thrown NullPointerException
 
         where: "input is invalid"
-            problem            | name                                        | username
-            "name is null"     | null                                        | UserId.from(faker.name().username())
-            "username is null" | ActivityName.from(faker.lorem().sentence()) | null
+            problem        | name
+            "name is null" | null
     }
 
     def "should refuse to update an activity name with null"() {
@@ -45,9 +44,8 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
 
     def "an activity may require resource material"() {
         given: "an activity and a resource"
-            def aUser = UserId.from(faker.name().username())
-            def resource = givenResource(aUser)
-            def activity = givenActivity(aUser)
+            def resource = givenResource()
+            def activity = givenActivity()
             def qty = faker.number().randomDigitNotZero()
         when: "a Resource is added to activity"
             def added = activity.addResource(resource, qty)
@@ -61,9 +59,8 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
 
     def "an activity refuse resource material with zero or less quantity"() {
         given: "an activity and a resource"
-            def aUser = UserId.from(faker.name().username())
-            def resource = givenResource(aUser)
-            def activity = givenActivity(aUser)
+            def resource = givenResource()
+            def activity = givenActivity()
         when: "a Resource with zero quantity is added to activity"
             activity.addResource(resource, quantity)
         then: "resource is refused"
@@ -78,10 +75,9 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
 
     def "a resource may be removed from activity"() {
         given: "an activity which has two resource"
-            def aUser = UserId.from(faker.name().username())
-            def resource = givenResource(aUser)
-            def otherResource = givenResource(aUser)
-            def activity = givenActivity(aUser)
+            def resource = givenResource()
+            def otherResource = givenResource()
+            def activity = givenActivity()
             activity.addResource(resource, faker.number().randomDigitNotZero())
             activity.addResource(otherResource, faker.number().randomDigitNotZero())
             activity.resources.size() == 2
@@ -93,25 +89,12 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
             activity.resources[0].resource == otherResource
     }
 
-    def "a resource of another user cannot be added to activity"() {
-        given: "an activity which has two resource"
-            def aUser = UserId.from(faker.name().username())
-            def anotherUser = UserId.from(faker.name().username())
-            def resource = givenResource(anotherUser)
-            def activity = givenActivity(aUser)
-        when: "resource is removed from activity"
-            def added = activity.addResource(resource, faker.number().randomDigitNotZero())
-        then: "activity has one resource"
-            !added
-            activity.resources.size() == 0
-    }
 
     def "a resource not associated with an activity cannot be not removed from activity"() {
         given: "an activity which has two resource"
-            def aUser = UserId.from(faker.name().username())
-            def resource = givenResource(aUser)
-            def otherResource = givenResource(aUser)
-            def activity = givenActivity(aUser)
+            def resource = givenResource()
+            def otherResource = givenResource()
+            def activity = givenActivity()
             activity.addResource(resource, faker.number().randomDigitNotZero())
             activity.resources.size() == 1
         when: "resource is removed from activity"
@@ -124,9 +107,8 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
 
     def "an activity must not add resource already added to activity"() {
         given: "an activity and a resource"
-            def aUser = UserId.from(faker.name().username())
-            def resource = givenResource(aUser)
-            def activity = givenActivity(aUser)
+            def resource = givenResource()
+            def activity = givenActivity()
         and: "this activity contains this resource"
             def qty = faker.number().randomDigitNotZero()
             activity.addResource(resource, qty)
@@ -141,10 +123,9 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
 
     def "user can update an activity resource quantity"() {
         given: "an activity and a resource"
-            def aUser = UserId.from(faker.name().username())
-            def resource = givenResource(aUser)
-            def anotherResource = givenResource(aUser)
-            def activity = givenActivity(aUser)
+            def resource = givenResource()
+            def anotherResource = givenResource()
+            def activity = givenActivity()
             def initialQty = faker.number().randomDigitNotZero()
             activity.addResource(resource, initialQty)
             activity.addResource(anotherResource, initialQty)
@@ -158,9 +139,8 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
 
     def "user cannot update an activity resource quantity with zero or negative value"() {
         given: "an activity and a resource"
-            def aUser = UserId.from(faker.name().username())
-            def activity = givenActivity(aUser)
-            def resource = givenResource(aUser)
+            def activity = givenActivity()
+            def resource = givenResource()
             def initialQty = faker.number().numberBetween(1, 150)
             activity.addResource(resource, initialQty)
 
@@ -181,11 +161,10 @@ class ActivitySpec extends BaseSpecification implements DomainSamples {
 
     def "update a quantity of a resource not present in activity has no impact"() {
         given: "an activity and a resource"
-            def aUser = UserId.from(faker.name().username())
-            def resource = givenResource(aUser)
-            def anotherResource = givenResource(aUser)
-            def resourceNotInActivity = givenResource(aUser)
-            def activity = givenActivity(aUser)
+            def resource = givenResource()
+            def anotherResource = givenResource()
+            def resourceNotInActivity = givenResource()
+            def activity = givenActivity()
             def initialQty = faker.number().randomDigitNotZero()
             activity.addResource(resource, initialQty)
             activity.addResource(anotherResource, initialQty)

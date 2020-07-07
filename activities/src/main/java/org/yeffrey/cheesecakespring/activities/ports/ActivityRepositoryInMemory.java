@@ -2,7 +2,6 @@ package org.yeffrey.cheesecakespring.activities.ports;
 
 import org.yeffrey.cheesecakespring.activities.core.RepositoryInMemory;
 import org.yeffrey.cheesecakespring.activities.domain.Activity;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
 
@@ -22,30 +21,27 @@ public class ActivityRepositoryInMemory extends RepositoryInMemory<Activity> imp
     }
 
     @Override
-    public Optional<ActivityDetails> findDetailsByIdAndOwnerId(Long id, UserId ownerId) {
+    public Optional<ActivityDetails> findDetailsById(Long id) {
         return Optional.ofNullable(this.db.get(id))
-            .filter(a -> a.belongsTo(ownerId))
             .map(a -> new ActivityDetails(a.getId(), a.getName(), a.getDescription()));
     }
 
     @Override
-    public Optional<Activity> findByIdAndOwnerId(long id, UserId ownerId) {
-        return Optional.ofNullable(this.db.get(id))
-            .filter(a -> a.belongsTo(ownerId));
+    public Optional<Activity> findById(long id) {
+        return Optional.ofNullable(this.db.get(id));
     }
 
     @Override
-    public List<ActivityOverview> findAllByOwnerId(UserId ownerId) {
+    public List<ActivityOverview> findAll() {
         return this.db.values().stream()
-            .filter(a -> a.belongsTo(ownerId))
             .map(a -> new ActivityOverview(a.getId(), a.getName()))
             .collect(Collectors.toList());
     }
 
     @Override
-    public boolean existsByIdAndOwnerId(Long id, UserId ownerId) {
+    public boolean existsById(Long id) {
         Activity activity = this.db.get(id);
-        return activity != null && activity.belongsTo(ownerId);
+        return activity != null;
     }
 
 }

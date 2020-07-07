@@ -2,7 +2,6 @@ package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
 import org.springframework.stereotype.Repository;
 import org.yeffrey.cheesecakespring.activities.domain.Resource;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceOverview;
@@ -27,22 +26,22 @@ public class ResourceRepositoryAdapter implements ResourceRepository {
     }
 
     @Override
-    public Optional<ResourceDetails> findDetailsByIdAndOwnerId(Long id, UserId ownerId) {
-        return this.resourceRepository.findDetailsByIdAndOwnerId(id, ownerId);
+    public Optional<ResourceDetails> findDetailsById(Long id) {
+        return this.resourceRepository.findDetailsById(id);
     }
 
     @Override
-    public Optional<Resource> findByIdAndOwnerId(long id, UserId ownerId) {
-        return this.resourceRepository.findByIdAndOwnerId(id, ownerId);
+    public Optional<Resource> findById(long id) {
+        return this.resourceRepository.findById(id);
     }
 
     @Override
-    public List<ResourceOverview> findAllByOwnerId(UserId ownerId) {
-        return this.resourceRepository.findAllByOwnerId(ownerId);
+    public List<ResourceOverview> findAll() {
+        return this.resourceRepository.findOverviewBy();
     }
 
     @Override
-    public List<ActivityResourceDetails> findAllByActivityIdAndOwnerId(Long activityId, UserId userId) {
-        return activityResourceRepository.findAllByActivityIdAndActivityOwnerId(activityId, userId);
+    public List<ActivityResourceDetails> findAllByActivityId(Long activityId) {
+        return activityResourceRepository.findAllByActivityId(activityId);
     }
 }

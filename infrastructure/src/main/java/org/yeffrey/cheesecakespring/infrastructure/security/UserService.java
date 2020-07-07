@@ -12,6 +12,7 @@ import java.util.Optional;
 @Component
 public class UserService implements AuthenticatedUserService {
 
+    @Override
     public Optional<UserId> getAuthenticatedUserId() {
         return Optional.of(SecurityContextHolder.getContext())
             .map(SecurityContext::getAuthentication)

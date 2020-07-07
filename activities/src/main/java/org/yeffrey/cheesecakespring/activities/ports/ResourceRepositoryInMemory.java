@@ -4,7 +4,6 @@ import org.yeffrey.cheesecakespring.activities.core.RepositoryInMemory;
 import org.yeffrey.cheesecakespring.activities.domain.Activity;
 import org.yeffrey.cheesecakespring.activities.domain.ActivityResourceId;
 import org.yeffrey.cheesecakespring.activities.domain.Resource;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceOverview;
@@ -26,29 +25,26 @@ public class ResourceRepositoryInMemory extends RepositoryInMemory<Resource> imp
     }
 
     @Override
-    public Optional<ResourceDetails> findDetailsByIdAndOwnerId(Long id, UserId ownerId) {
+    public Optional<ResourceDetails> findDetailsById(Long id) {
         return Optional.ofNullable(this.db.get(id))
-            .filter(r -> r.belongsTo(ownerId))
             .map(r -> new ResourceDetails(r.getId(), r.getName(), r.getDescription(), r.getQuantityUnit()));
     }
 
     @Override
-    public Optional<Resource> findByIdAndOwnerId(long id, UserId ownerId) {
-        return Optional.ofNullable(this.db.get(id))
-            .filter(r -> r.belongsTo(ownerId));
+    public Optional<Resource> findById(long id) {
+        return Optional.ofNullable(this.db.get(id));
     }
 
     @Override
-    public List<ResourceOverview> findAllByOwnerId(UserId ownerId) {
+    public List<ResourceOverview> findAll() {
         return this.db.values().stream()
-            .filter(r -> r.belongsTo(ownerId))
             .map(r -> new ResourceOverview(r.getId(), r.getName()))
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<ActivityResourceDetails> findAllByActivityIdAndOwnerId(Long activityId, UserId userId) {
-        return ActivityRepositoryInMemory.instance().findByIdAndOwnerId(activityId, userId)
+    public List<ActivityResourceDetails> findAllByActivityId(Long activityId) {
+        return ActivityRepositoryInMemory.instance().findById(activityId)
             .stream()
             .map(Activity::getResources)
             .flatMap(Collection::stream)

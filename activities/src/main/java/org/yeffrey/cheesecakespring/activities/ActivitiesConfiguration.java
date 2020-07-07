@@ -1,38 +1,41 @@
 package org.yeffrey.cheesecakespring.activities;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.ports.*;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 class ActivitiesConfiguration {
-    ActivityStories activityStories(AuthenticatedUserService authenticatedUserService) {
-        return activityStories(ActivityRepositoryInMemory.instance(), authenticatedUserService);
+
+    @Bean
+    public AuditorAware<UserId> auditorProvider(AuthenticatedUserService authenticatedUserService) {
+        return authenticatedUserService::getAuthenticatedUserId;
     }
 
-    ActivityStories activityStories(ActivityRepository activityRepository, AuthenticatedUserService authenticatedUserService) {
-        return new ActivityStories(
-            activityRepository,
-            authenticatedUserService);
+    ActivityStories activityStories() {
+        return activityStories(ActivityRepositoryInMemory.instance());
     }
 
-    ResourceStories resourceStories(AuthenticatedUserService authenticatedUserService) {
-        return resourceStories(ResourceRepositoryInMemory.instance(), authenticatedUserService);
+    private ActivityStories activityStories(ActivityRepository activityRepository) {
+        return new ActivityStories(activityRepository);
     }
 
-    ResourceStories resourceStories(ResourceRepository resourceRepository, AuthenticatedUserService authenticatedUserService) {
-        return new ResourceStories(
-            resourceRepository,
-            authenticatedUserService);
+    ResourceStories resourceStories() {
+        return resourceStories(ResourceRepositoryInMemory.instance());
     }
 
-    ActivityResourceStories activityResourceStories(AuthenticatedUserService authenticatedUserService) {
-        return new ActivityResourceStories(ActivityRepositoryInMemory.instance(), ResourceRepositoryInMemory.instance(), authenticatedUserService);
+    private ResourceStories resourceStories(ResourceRepository resourceRepository) {
+        return new ResourceStories(resourceRepository);
     }
 
-    ActivityResourceStories activityResourceStories(ActivityRepository activityRepository, ResourceRepository resourceRepository, AuthenticatedUserService authenticatedUserService) {
-        return new ActivityResourceStories(activityRepository, resourceRepository, authenticatedUserService);
+    ActivityResourceStories activityResourceStories() {
+        return new ActivityResourceStories(ActivityRepositoryInMemory.instance(), ResourceRepositoryInMemory.instance());
     }
 
     // https://www.baeldung.com/spring-enum-request-param

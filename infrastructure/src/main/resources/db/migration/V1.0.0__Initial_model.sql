@@ -13,7 +13,7 @@ CREATE TABLE activities
         constraint activities_uuid_uk UNIQUE,
     name        character varying(255) not null,
     description text,
-    owner_id    character varying(255) not null,
+    created_by  character varying(255) not null,
     version     integer                not null default 0,
     CONSTRAINT activities_pkey PRIMARY KEY (id)
 )

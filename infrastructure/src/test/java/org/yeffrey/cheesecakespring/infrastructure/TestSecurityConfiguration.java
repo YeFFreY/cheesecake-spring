@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Profile("integration")
 @Configuration
 @EnableWebSecurity
-public class SecurityTestConfig extends WebSecurityConfigurerAdapter {
+public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -17,7 +17,6 @@ public class SecurityTestConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/api").permitAll()
             .antMatchers("/api/**").authenticated()
             .anyRequest().permitAll();
-
 
     }
 /*

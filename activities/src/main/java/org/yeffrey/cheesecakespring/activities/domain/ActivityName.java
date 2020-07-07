@@ -23,7 +23,7 @@ public class ActivityName implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ActivityName)) return false;
         ActivityName that = (ActivityName) o;
         return value.equals(that.value);
     }

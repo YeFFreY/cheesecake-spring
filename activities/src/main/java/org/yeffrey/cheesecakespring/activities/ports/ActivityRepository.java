@@ -1,7 +1,6 @@
 package org.yeffrey.cheesecakespring.activities.ports;
 
 import org.yeffrey.cheesecakespring.activities.domain.Activity;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
 
@@ -11,11 +10,12 @@ import java.util.Optional;
 public interface ActivityRepository {
     Activity save(Activity entity);
 
-    Optional<ActivityDetails> findDetailsByIdAndOwnerId(Long id, UserId ownerId);
+    Optional<ActivityDetails> findDetailsById(Long id);
 
-    Optional<Activity> findByIdAndOwnerId(long id, UserId ownerId);
+    Optional<Activity> findById(long id);
 
-    List<ActivityOverview> findAllByOwnerId(UserId ownerId);
+    // TODO still need to find a way to retrieve only the one he has access because filter by owner id is not enough anymore (use might get access indirectly to an activity f.i. when another user allows him)
+    List<ActivityOverview> findAll();
 
-    boolean existsByIdAndOwnerId(Long id, UserId ownerId);
+    boolean existsById(Long id);
 }

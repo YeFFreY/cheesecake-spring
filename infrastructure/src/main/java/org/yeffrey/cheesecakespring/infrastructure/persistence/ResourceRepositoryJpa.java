@@ -2,7 +2,6 @@ package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
 import org.springframework.data.repository.Repository;
 import org.yeffrey.cheesecakespring.activities.domain.Resource;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ResourceOverview;
 
@@ -13,9 +12,9 @@ import java.util.Optional;
 interface ResourceRepositoryJpa extends Repository<Resource, Long> {
     Resource save(Resource entity);
 
-    Optional<ResourceDetails> findDetailsByIdAndOwnerId(Long id, UserId ownerId);
+    Optional<ResourceDetails> findDetailsById(Long id);
 
-    Optional<Resource> findByIdAndOwnerId(long id, UserId ownerId);
+    Optional<Resource> findById(long id);
 
-    List<ResourceOverview> findAllByOwnerId(UserId ownerId);
+    List<ResourceOverview> findOverviewBy();
 }

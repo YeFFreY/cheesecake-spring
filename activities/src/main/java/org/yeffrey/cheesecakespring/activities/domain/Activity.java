@@ -1,6 +1,6 @@
 package org.yeffrey.cheesecakespring.activities.domain;
 
-import org.yeffrey.cheesecakespring.activities.core.OwnedDomain;
+import org.yeffrey.cheesecakespring.activities.core.AuditedDomain;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity
 @Table(name = "activities")
-public class Activity extends OwnedDomain {
+public class Activity extends AuditedDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "activities_generator")
@@ -32,26 +32,20 @@ public class Activity extends OwnedDomain {
     private Set<ActivityResource> resources = new HashSet<>(5);
 
     protected Activity() {
-        super(UserId.system());
     }
 
-    private Activity(ActivityName name, ActivityDescription description, UserId owner) {
-        super(owner);
+    private Activity(ActivityName name, ActivityDescription description) {
         this.name = name;
         this.description = description;
     }
 
-    public static Activity from(ActivityName name, ActivityDescription description, UserId owner) {
+    public static Activity from(ActivityName name, ActivityDescription description) {
         checkNotNull(name);
-        checkNotNull(owner);
-        return new Activity(name, description, owner);
+        return new Activity(name, description);
     }
 
     public boolean addResource(Resource resource, int quantity) {
         checkNotNull(resource);
-        if (!resource.belongsTo(this.ownerId)) {
-            return false;
-        }
         ActivityResource activityResource = ActivityResource.from(this, resource, quantity);
         return this.resources.add(activityResource);
     }
@@ -68,6 +62,7 @@ public class Activity extends OwnedDomain {
         return this;
     }
 
+    @Override
     public Long getId() {
         return id;
     }

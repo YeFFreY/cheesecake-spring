@@ -28,7 +28,7 @@ public class ActivityResourceId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ActivityResourceId)) return false;
         ActivityResourceId that = (ActivityResourceId) o;
         return activityId.equals(that.activityId) &&
             resourceId.equals(that.resourceId);

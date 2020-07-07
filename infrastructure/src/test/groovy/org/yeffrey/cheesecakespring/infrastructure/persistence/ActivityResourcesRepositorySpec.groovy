@@ -1,18 +1,12 @@
-package org.yeffrey.cheesecakespring.infrastructure
+package org.yeffrey.cheesecakespring.infrastructure.persistence
 
-import com.github.javafaker.Faker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.yeffrey.cheesecakespring.activities.domain.DomainSamples
-import org.yeffrey.cheesecakespring.activities.domain.UserId
 import org.yeffrey.cheesecakespring.activities.ports.ActivityRepository
 import org.yeffrey.cheesecakespring.activities.ports.ResourceRepository
-import spock.lang.Shared
 
 class ActivityResourcesRepositorySpec extends IntegrationSpecification implements DomainSamples {
-    @Shared
-    def faker = new Faker()
-
     @Autowired
     private TestEntityManager entityManager
 
@@ -24,9 +18,8 @@ class ActivityResourcesRepositorySpec extends IntegrationSpecification implement
 
     def "given a saved activity and existing saved resource, resource added to activity link is persisted"() {
         given: "valid input"
-            def user = UserId.from(faker.name().username())
-            def activity = activityRepository.save(givenActivity(user))
-            def resource = resourceRepository.save(givenResource(user))
+            def activity = activityRepository.save(givenActivity())
+            def resource = resourceRepository.save(givenResource())
 
         when: "resource added to activity"
             def qty = faker.number().randomDigitNotZero()
@@ -42,11 +35,10 @@ class ActivityResourcesRepositorySpec extends IntegrationSpecification implement
 
     def "given a saved activity and existing saved resources, multiple resources added to activity link is persisted"() {
         given: "valid input"
-            def user = UserId.from(faker.name().username())
-            def activity = activityRepository.save(givenActivity(user))
-            def resource = resourceRepository.save(givenResource(user))
-            def resource2 = resourceRepository.save(givenResource(user))
-            def resource3 = resourceRepository.save(givenResource(user))
+            def activity = activityRepository.save(givenActivity())
+            def resource = resourceRepository.save(givenResource())
+            def resource2 = resourceRepository.save(givenResource())
+            def resource3 = resourceRepository.save(givenResource())
 
         when: "resource added to activity"
             def qty = faker.number().randomDigitNotZero()
@@ -57,7 +49,7 @@ class ActivityResourcesRepositorySpec extends IntegrationSpecification implement
             flushAndClear()
 
         then: "activity is saved and resources are associated with it"
-            def activityWithResources = activityRepository.findByIdAndOwnerId(result.id, user)
+            def activityWithResources = activityRepository.findById(result.id)
             activityWithResources.isPresent()
             activityWithResources.get().resources.size() == 3
     }
@@ -65,11 +57,10 @@ class ActivityResourcesRepositorySpec extends IntegrationSpecification implement
 
     def "given a saved activity and associated resources, activity resources can be retrieved"() {
         given: "valid input"
-            def user = UserId.from(faker.name().username())
-            def activity = activityRepository.save(givenActivity(user))
-            def resource = resourceRepository.save(givenResource(user))
-            def resource2 = resourceRepository.save(givenResource(user))
-            def resource3 = resourceRepository.save(givenResource(user))
+            def activity = activityRepository.save(givenActivity())
+            def resource = resourceRepository.save(givenResource())
+            def resource2 = resourceRepository.save(givenResource())
+            def resource3 = resourceRepository.save(givenResource())
 
         when: "resource added to activity"
             def qty = faker.number().randomDigitNotZero()
@@ -80,39 +71,16 @@ class ActivityResourcesRepositorySpec extends IntegrationSpecification implement
             flushAndClear()
 
         then: "activity is saved and resources are associated with it"
-            def activityWithResources = resourceRepository.findAllByActivityIdAndOwnerId(activity.id, user)
+            def activityWithResources = resourceRepository.findAllByActivityId(activity.id)
             activityWithResources.size() == 3
     }
 
-    def "given a saved activity and associated resources from a user, another user cannot retrieved the resources associated with this activity"() {
+    def "given a saved activity and associated resources, resources can be removed from the activity"() {
         given: "valid input"
-            def user = UserId.from(faker.name().username())
-            def activity = activityRepository.save(givenActivity(user))
-            def resource = resourceRepository.save(givenResource(user))
-            def resource2 = resourceRepository.save(givenResource(user))
-            def resource3 = resourceRepository.save(givenResource(user))
-
-        and: "activity associated with resources"
-            activity.addResource(resource, faker.number().randomDigitNotZero())
-            activity.addResource(resource2, faker.number().randomDigitNotZero())
-            activity.addResource(resource3, faker.number().randomDigitNotZero())
-            activityRepository.save(activity)
-            flushAndClear()
-
-        when: "another user tries to retrieve the resources of this activity"
-            def activityWithResources = resourceRepository.findAllByActivityIdAndOwnerId(activity.id, UserId.from("anotherUser"))
-
-        then: "nothing is returned"
-            activityWithResources.size() == 0
-    }
-
-    def "given a saved activity and associated resources from a user, resources can be removed from the activity"() {
-        given: "valid input"
-            def user = UserId.from(faker.name().username())
-            def activity = activityRepository.save(givenActivity(user))
-            def resource = resourceRepository.save(givenResource(user))
-            def resource2 = resourceRepository.save(givenResource(user))
-            def resource3 = resourceRepository.save(givenResource(user))
+            def activity = activityRepository.save(givenActivity())
+            def resource = resourceRepository.save(givenResource())
+            def resource2 = resourceRepository.save(givenResource())
+            def resource3 = resourceRepository.save(givenResource())
 
         and: "activity associated with resources"
             activity.addResource(resource, faker.number().randomDigitNotZero())
@@ -126,7 +94,7 @@ class ActivityResourcesRepositorySpec extends IntegrationSpecification implement
             activity.removeResource(resource2)
             activityRepository.save(activity)
             flushAndClear()
-            def activityWithResources = resourceRepository.findAllByActivityIdAndOwnerId(activity.id, user)
+            def activityWithResources = resourceRepository.findAllByActivityId(activity.id)
 
         then: "resources are removed"
             activityWithResources.size() == 1

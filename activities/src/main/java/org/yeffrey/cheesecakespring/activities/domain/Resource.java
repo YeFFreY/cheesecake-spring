@@ -1,6 +1,6 @@
 package org.yeffrey.cheesecakespring.activities.domain;
 
-import org.yeffrey.cheesecakespring.activities.core.OwnedDomain;
+import org.yeffrey.cheesecakespring.activities.core.AuditedDomain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity
 @Table(name = "resources")
-public class Resource extends OwnedDomain {
+public class Resource extends AuditedDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "resources_generator")
@@ -23,23 +23,21 @@ public class Resource extends OwnedDomain {
     @Column(name = "quantity_unit")
     @Enumerated(EnumType.STRING)
     @NotNull
-    private ResourceQuantityUnit quantityUnit = ResourceQuantityUnit.Item;
+    private ResourceQuantityUnit quantityUnit;
 
     protected Resource() {
-        super(UserId.system());
     }
 
-    private Resource(ResourceName name, ResourceDescription description, ResourceQuantityUnit quantityUnit, UserId owner) {
-        super(owner);
+    private Resource(ResourceName name, ResourceDescription description, ResourceQuantityUnit quantityUnit) {
         this.name = name;
         this.description = description;
         this.quantityUnit = quantityUnit;
     }
 
-    public static Resource from(ResourceName name, ResourceDescription description, ResourceQuantityUnit quantityUnit, UserId owner) {
+    public static Resource from(ResourceName name, ResourceDescription description, ResourceQuantityUnit quantityUnit) {
         checkNotNull(name);
         checkNotNull(quantityUnit);
-        return new Resource(name, description, quantityUnit, owner);
+        return new Resource(name, description, quantityUnit);
     }
 
 
@@ -52,6 +50,7 @@ public class Resource extends OwnedDomain {
         return this;
     }
 
+    @Override
     public Long getId() {
         return id;
     }

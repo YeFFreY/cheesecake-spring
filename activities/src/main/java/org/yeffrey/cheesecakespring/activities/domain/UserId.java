@@ -22,9 +22,9 @@ public class UserId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserId that = (UserId) o;
-        return value.equals(that.value);
+        if (!(o instanceof UserId)) return false;
+        UserId userId = (UserId) o;
+        return value.equals(userId.value);
     }
 
     @Override

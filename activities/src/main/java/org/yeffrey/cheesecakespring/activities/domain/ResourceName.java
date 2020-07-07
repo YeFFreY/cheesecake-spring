@@ -23,7 +23,7 @@ public class ResourceName implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ResourceName)) return false;
         ResourceName that = (ResourceName) o;
         return value.equals(that.value);
     }

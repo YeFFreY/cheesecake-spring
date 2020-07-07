@@ -2,7 +2,6 @@ package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
 import org.springframework.data.repository.Repository;
 import org.yeffrey.cheesecakespring.activities.domain.Activity;
-import org.yeffrey.cheesecakespring.activities.domain.UserId;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
 
@@ -12,11 +11,11 @@ import java.util.Optional;
 interface ActivityRepositoryJpa extends Repository<Activity, Long> {
     Activity save(Activity entity);
 
-    Optional<ActivityDetails> findDetailsByIdAndOwnerId(Long id, UserId ownerId);
+    Optional<ActivityDetails> findDetailsById(Long id);
 
-    Optional<Activity> findByIdAndOwnerId(long id, UserId ownerId);
+    Optional<Activity> findById(long id);
 
-    List<ActivityOverview> findAllByOwnerId(UserId ownerId);
+    List<ActivityOverview> findOverviewBy();
 
-    boolean existsByIdAndOwnerId(Long id, UserId ownerId);
+    boolean existsById(Long id);
 }
