@@ -5,9 +5,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.ListResourceModelAssembler;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.ActivitiesController;
+import org.yeffrey.cheesecakespring.library.dto.ActivityOverview;
 
 import java.util.Objects;
 

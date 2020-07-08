@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.yeffrey.cheesecakespring.activities.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.RestIntegrationTest;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.ActivitiesEndpoint;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.utils.JsonTestUtils;
+import org.yeffrey.cheesecakespring.library.dto.CreateUpdateActivityCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;

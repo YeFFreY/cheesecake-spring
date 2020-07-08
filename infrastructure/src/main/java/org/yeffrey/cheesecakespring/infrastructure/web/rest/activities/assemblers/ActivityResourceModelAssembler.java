@@ -4,8 +4,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.yeffrey.cheesecakespring.activities.dto.ActivityResourceDetails;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.ListResourceModelAssembler;
+import org.yeffrey.cheesecakespring.library.dto.ActivityResourceDetails;
 
 @Component
 public class ActivityResourceModelAssembler implements ListResourceModelAssembler<ActivityResourceDetails> {

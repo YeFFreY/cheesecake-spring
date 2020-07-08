@@ -23,7 +23,7 @@
     </properties>
 
     <modules>
-        <module>activities</module>
+        <module>library</module>
         <module>infrastructure</module>
         <module>application</module>
     </modules>

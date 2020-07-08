@@ -1,6 +1,6 @@
 package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
-import org.yeffrey.cheesecakespring.activities.domain.ActivityDescription;
+import org.yeffrey.cheesecakespring.library.domain.ActivityDescription;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.AuditorAware
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
-import org.yeffrey.cheesecakespring.activities.domain.UserId
+import org.yeffrey.cheesecakespring.library.domain.UserId
 
 @Profile("repository-only")
 @Configuration

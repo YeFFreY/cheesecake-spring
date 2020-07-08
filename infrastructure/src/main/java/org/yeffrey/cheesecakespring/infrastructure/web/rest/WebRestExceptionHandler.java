@@ -3,7 +3,7 @@ package org.yeffrey.cheesecakespring.infrastructure.web.rest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.yeffrey.cheesecakespring.activities.core.ResourceNotFoundException;
+import org.yeffrey.cheesecakespring.library.core.ResourceNotFoundException;
 
 @RestControllerAdvice
 public class WebRestExceptionHandler /*extends ResponseEntityExceptionHandler*/ {

@@ -5,9 +5,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.yeffrey.cheesecakespring.activities.dto.AddResourceToActivityCommand;
-import org.yeffrey.cheesecakespring.activities.dto.AdjustActivityResourceQuantityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
+import org.yeffrey.cheesecakespring.library.dto.AddResourceToActivityCommand;
+import org.yeffrey.cheesecakespring.library.dto.AdjustActivityResourceQuantityCommand;
 
 import javax.annotation.Nullable;
 import java.util.Objects;

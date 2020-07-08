@@ -4,11 +4,11 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.yeffrey.cheesecakespring.activities.ActivityResourceStories;
-import org.yeffrey.cheesecakespring.activities.dto.ActivityResourceDetails;
-import org.yeffrey.cheesecakespring.activities.dto.AddResourceToActivityCommand;
-import org.yeffrey.cheesecakespring.activities.dto.AdjustActivityResourceQuantityCommand;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.assemblers.ActivityResourceModelAssembler;
+import org.yeffrey.cheesecakespring.library.ActivityResourceStories;
+import org.yeffrey.cheesecakespring.library.dto.ActivityResourceDetails;
+import org.yeffrey.cheesecakespring.library.dto.AddResourceToActivityCommand;
+import org.yeffrey.cheesecakespring.library.dto.AdjustActivityResourceQuantityCommand;
 
 import javax.validation.Valid;
 import java.util.List;

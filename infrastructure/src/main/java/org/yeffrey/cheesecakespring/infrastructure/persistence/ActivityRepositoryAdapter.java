@@ -1,10 +1,10 @@
 package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
 import org.springframework.stereotype.Repository;
-import org.yeffrey.cheesecakespring.activities.domain.Activity;
-import org.yeffrey.cheesecakespring.activities.dto.ActivityDetails;
-import org.yeffrey.cheesecakespring.activities.dto.ActivityOverview;
-import org.yeffrey.cheesecakespring.activities.ports.ActivityRepository;
+import org.yeffrey.cheesecakespring.library.domain.Activity;
+import org.yeffrey.cheesecakespring.library.dto.ActivityDetails;
+import org.yeffrey.cheesecakespring.library.dto.ActivityOverview;
+import org.yeffrey.cheesecakespring.library.ports.ActivityRepository;
 
 import java.util.List;
 import java.util.Optional;

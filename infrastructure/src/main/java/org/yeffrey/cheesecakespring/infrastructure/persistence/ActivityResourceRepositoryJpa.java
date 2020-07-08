@@ -1,8 +1,8 @@
 package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
 import org.springframework.data.repository.Repository;
-import org.yeffrey.cheesecakespring.activities.domain.ActivityResource;
-import org.yeffrey.cheesecakespring.activities.dto.ActivityResourceDetails;
+import org.yeffrey.cheesecakespring.library.domain.ActivityResource;
+import org.yeffrey.cheesecakespring.library.dto.ActivityResourceDetails;
 
 import java.util.List;
 
