@@ -58,11 +58,11 @@ public interface ActivitiesEndpoint {
     }
 
 
-    default void updateActivity(EntityId entityId, CreateUpdateActivityCommand command) throws Exception {
-        getMvc().perform(put("/api/activities/{id}", entityId.getId())
-                             .content(getMapper().writeValueAsString(command))
-                             .contentType(MediaType.APPLICATION_JSON)
-                             .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+    default ResultActions updateActivity(EntityId entityId,
+                                         CreateUpdateActivityCommand command) throws Exception {
+        return getMvc().perform(put("/api/activities/{id}", entityId.getId())
+                                    .content(getMapper().writeValueAsString(command))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON));
     }
 }

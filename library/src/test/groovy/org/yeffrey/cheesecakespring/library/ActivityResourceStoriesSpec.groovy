@@ -1,15 +1,18 @@
 package org.yeffrey.cheesecakespring.library
 
-
 import org.yeffrey.cheesecakespring.library.dto.AddResourceToActivityCommand
-import org.yeffrey.cheesecakespring.library.dto.AdjustActivityResourceQuantityCommand
 import org.yeffrey.cheesecakespring.library.dto.CreateUpdateActivityCommand
 import org.yeffrey.cheesecakespring.library.dto.CreateUpdateResourceCommand
+import org.yeffrey.cheesecakespring.library.stories.ActivityResourceStories
+import org.yeffrey.cheesecakespring.library.stories.ActivityStories
+import org.yeffrey.cheesecakespring.library.stories.LibraryStories
+import org.yeffrey.cheesecakespring.library.stories.ResourceStories
 
 class ActivityResourceStoriesSpec extends BaseSpecification {
-    def activityStories = new ActivitiesConfiguration().activityStories()
-    def resourceStories = new ActivitiesConfiguration().resourceStories()
-    def activityResourceStories = new ActivitiesConfiguration().activityResourceStories()
+    def libraryStories = new LibraryStories(authenticatedService, libraryRepository)
+    def resourceStories = new ResourceStories(libraryStories, resourceRepository)
+    def activityStories = new ActivityStories(libraryStories, activityRepository)
+    def activityResourceStories = new ActivityResourceStories(activityRepository, resourceRepository)
 
     /* FIXME move this in super class to reuse them in every specs !! */
 
@@ -25,22 +28,22 @@ class ActivityResourceStoriesSpec extends BaseSpecification {
         return new AddResourceToActivityCommand(resourceId, faker.number().randomDigitNotZero())
     }
 
-    def newActivityResourceQuantityAdjustementCommand(Long resourceId) {
-        return new AdjustActivityResourceQuantityCommand(faker.number().randomDigitNotZero())
+    def setup() {
+        authenticatedService.findAuthenticatedUserId() >> aUser
+        libraryStories.createLibraryForCurrentUser()
     }
-
 
     def "An resource can be added an activity"() {
         given: "an authenticated user"
-            authenticatedService.getAuthenticatedUserId() >> aUser
+            authenticatedService.findAuthenticatedUserId() >> aUser
 
         and: "an activity and a resource created by a user"
-            def activityId = activityStories.registerActivity(newActivityCommand())
-            def resourceId = resourceStories.registerResource(newResourceCommand())
+            def activityId = activityStories.addToLibrary(newActivityCommand())
+            def resourceId = resourceStories.addToLibrary(newResourceCommand())
 
         when: "the resource is added to the activity"
             def cmd = newActivityResourceCommand(resourceId)
-            activityResourceStories.activityRequiresResource(activityId, cmd)
+            activityResourceStories.addResourceToActivity(activityId, cmd)
 
         then: "activity has the resource linked to it"
             def activityResources = activityResourceStories.findActivityResources(activityId)
@@ -52,16 +55,16 @@ class ActivityResourceStoriesSpec extends BaseSpecification {
 
     def "An activity doesn't accept duplicate resource"() {
         given: "an authenticated user"
-            authenticatedService.getAuthenticatedUserId() >> aUser
+            authenticatedService.findAuthenticatedUserId() >> aUser
 
         and: "an activity with a resource"
-            def activityId = activityStories.registerActivity(newActivityCommand())
-            def resourceId = resourceStories.registerResource(newResourceCommand())
+            def activityId = activityStories.addToLibrary(newActivityCommand())
+            def resourceId = resourceStories.addToLibrary(newResourceCommand())
             def cmd = newActivityResourceCommand(resourceId)
-            activityResourceStories.activityRequiresResource(activityId, cmd)
+            activityResourceStories.addResourceToActivity(activityId, cmd)
 
         when: "the resource is added twice to the activity"
-            def added = activityResourceStories.activityRequiresResource(activityId, newActivityResourceCommand(resourceId))
+            def added = activityResourceStories.addResourceToActivity(activityId, newActivityResourceCommand(resourceId))
 
         then: "activity has only a single resource with unchanged qties"
             !added
@@ -74,40 +77,20 @@ class ActivityResourceStoriesSpec extends BaseSpecification {
 
     def "A resource can be removed from an activity"() {
         given: "an authenticated user"
-            authenticatedService.getAuthenticatedUserId() >> aUser
+            authenticatedService.findAuthenticatedUserId() >> aUser
 
         and: "an activity with a resource"
-            def activityId = activityStories.registerActivity(newActivityCommand())
-            def resourceId = resourceStories.registerResource(newResourceCommand())
-            def cmd = newActivityResourceCommand(resourceId)
-            activityResourceStories.activityRequiresResource(activityId, cmd)
+            def activityId = activityStories.addToLibrary(newActivityCommand())
+            def resourceId = resourceStories.addToLibrary(newResourceCommand())
+            activityResourceStories.addResourceToActivity(activityId, newActivityResourceCommand(resourceId))
 
         when: "the resource is removed from the activity"
-            def removed = activityResourceStories.resourceNotRequiredAnymore(activityId, resourceId)
+            def removed = activityResourceStories.removeResourceFromActivity(activityId, resourceId)
 
         then: "activity has no more the resources"
             removed
             def activityResources = activityResourceStories.findActivityResources(activityId)
             activityResources.size() == 0
-    }
-
-    def "An activity resource can get its quantity updated"() {
-        given: "an authenticated user"
-            authenticatedService.getAuthenticatedUserId() >> aUser
-
-        and: "an activity with a resource"
-            def activityId = activityStories.registerActivity(newActivityCommand())
-            def resourceId = resourceStories.registerResource(newResourceCommand())
-            activityResourceStories.activityRequiresResource(activityId, newActivityResourceCommand(resourceId))
-
-        when: "a user updates the quantity"
-            def cmd = newActivityResourceQuantityAdjustementCommand()
-            def updated = activityResourceStories.adjustActivityResourceQuantity(activityId, resourceId, cmd)
-
-        then: "activity resource has its quantity updated"
-            updated
-            def activityResources = activityResourceStories.findActivityResources(activityId)
-            activityResources[0].quantity == cmd.quantity
     }
 
 }

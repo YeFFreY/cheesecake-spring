@@ -1,12 +1,14 @@
 package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.yeffrey.cheesecakespring.infrastructure.RestIntegrationTest;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.ActivitiesEndpoint;
+import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.LibrariesEndpoint;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.utils.JsonTestUtils;
 import org.yeffrey.cheesecakespring.library.dto.CreateUpdateActivityCommand;
 
@@ -15,7 +17,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ActivitiesControllerTest extends RestIntegrationTest implements ActivitiesEndpoint {
+class ActivitiesControllerTest extends RestIntegrationTest implements ActivitiesEndpoint, LibrariesEndpoint {
 
     @Override
     public MockMvc getMvc() {
@@ -31,6 +33,11 @@ class ActivitiesControllerTest extends RestIntegrationTest implements Activities
         return new CreateUpdateActivityCommand(faker.lorem().sentence(), faker.lorem().paragraph());
     }
 
+    @BeforeEach
+    public void givenLibrary() throws Exception {
+        userLibrary();
+        userLibrary(this.anotherUser);
+    }
 
     @Test
     @WithMockUser
@@ -50,17 +57,15 @@ class ActivitiesControllerTest extends RestIntegrationTest implements Activities
 
     }
 
-/*
     @Test
     @WithMockUser
     void userShouldNotRetrieveAnActivityCreatedByAnotherUser() throws Exception {
-        EntityId anotherUserActivity = newActivity(givenACreateUpdateCommand(), "anotherUser");
+        EntityId anotherUserActivity = newActivity(givenACreateUpdateCommand(), this.anotherUser);
 
-        showActivity(anotherUserActivity).andExpect(status().isNotFound())
+        showActivity(anotherUserActivity).andExpect(status().isForbidden())
             .andExpect(jsonPath("$").doesNotExist());
 
     }
-*/
 
     @Test
     @WithMockUser
@@ -69,7 +74,7 @@ class ActivitiesControllerTest extends RestIntegrationTest implements Activities
         EntityId entityId = newActivity(command);
 
         CreateUpdateActivityCommand updateCommand = givenACreateUpdateCommand();
-        updateActivity(entityId, updateCommand);
+        updateActivity(entityId, updateCommand).andExpect(status().isOk());
 
         showActivity(entityId)
             .andExpect(jsonPath("$.id").value(entityId.getId()))
@@ -80,11 +85,24 @@ class ActivitiesControllerTest extends RestIntegrationTest implements Activities
 
     @Test
     @WithMockUser
-    void userShouldRetrieveAllActivitiesHeCreated() throws Exception {
+    void userShouldNotUpdateAnActivityCreatedByAnotherUser() throws Exception {
+        CreateUpdateActivityCommand command = givenACreateUpdateCommand();
+        EntityId entityId = newActivity(command, this.anotherUser);
+
+        CreateUpdateActivityCommand updateCommand = givenACreateUpdateCommand();
+        updateActivity(entityId, updateCommand).andExpect(status().isForbidden())
+            .andExpect(jsonPath("$").doesNotExist());
+
+    }
+
+    @Test
+    @WithMockUser
+    void userShouldRetrieveAllActivitiesHeCreatedAndNotOthers() throws Exception {
         CreateUpdateActivityCommand command = givenACreateUpdateCommand();
         EntityId entityId = newActivity(command);
         CreateUpdateActivityCommand anotherCommand = givenACreateUpdateCommand();
         EntityId anotherEntityId = newActivity(anotherCommand);
+        newActivity(givenACreateUpdateCommand(), this.anotherUser);
 
         showActivities()
             .andExpect(jsonPath("$", hasSize(2)))

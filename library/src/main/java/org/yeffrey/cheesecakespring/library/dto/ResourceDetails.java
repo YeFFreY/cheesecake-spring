@@ -33,4 +33,5 @@ public class ResourceDetails implements ModelDto {
     public ResourceQuantityUnit getQuantityUnit() {
         return quantityUnit;
     }
+
 }

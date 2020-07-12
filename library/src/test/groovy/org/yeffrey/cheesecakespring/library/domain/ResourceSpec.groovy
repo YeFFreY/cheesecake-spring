@@ -4,6 +4,7 @@ import org.yeffrey.cheesecakespring.library.BaseSpecification
 import spock.lang.Unroll
 
 class ResourceSpec extends BaseSpecification implements DomainSamples {
+    def library = Library.from(UserId.from(faker.name().username()))
 
     def "a resource holds the details it is given"() {
         given: "some input"
@@ -11,7 +12,7 @@ class ResourceSpec extends BaseSpecification implements DomainSamples {
             def description = ResourceDescription.from(faker.lorem().paragraph())
             def qtyUnit = ResourceQuantityUnit.Item
         expect: "a resource has a quantity unit"
-            def resource = Resource.from(name, description, qtyUnit)
+            def resource = Resource.from(library, name, description, qtyUnit)
             resource.name == name
             resource.description == description
             resource.quantityUnit == qtyUnit
@@ -20,7 +21,7 @@ class ResourceSpec extends BaseSpecification implements DomainSamples {
     @Unroll
     def "should refuse to create a new resource because #problem"() {
         when: "creating an resource"
-            Resource.from(name, null, qtyUnit)
+            Resource.from(library, name, null, qtyUnit)
 
         then: "fails"
             thrown NullPointerException
@@ -34,7 +35,7 @@ class ResourceSpec extends BaseSpecification implements DomainSamples {
     @Unroll
     def "should refuse to update an existing resource because #problem"() {
         given: "an existing resource"
-            def resource = givenResource()
+            def resource = givenResource(library)
         when: "creating an resource"
             resource.updateDetails(name, null, qtyUnit)
 
@@ -49,7 +50,7 @@ class ResourceSpec extends BaseSpecification implements DomainSamples {
 
     def "update a resource description with null is valid"() {
         given: "an existing activity"
-            def resource = givenResource()
+            def resource = givenResource(library)
         when: "update an activity"
             resource.updateDetails(ResourceName.from(faker.lorem().sentence()), null, ResourceQuantityUnit.Item)
 

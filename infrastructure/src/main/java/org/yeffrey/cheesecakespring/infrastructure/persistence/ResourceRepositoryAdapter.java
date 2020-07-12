@@ -1,23 +1,30 @@
 package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
+import org.yeffrey.cheesecakespring.infrastructure.core.PortAdapter;
+import org.yeffrey.cheesecakespring.library.domain.Library;
 import org.yeffrey.cheesecakespring.library.domain.Resource;
-import org.yeffrey.cheesecakespring.library.dto.ActivityResourceDetails;
+import org.yeffrey.cheesecakespring.library.domain.UserId;
 import org.yeffrey.cheesecakespring.library.dto.ResourceDetails;
 import org.yeffrey.cheesecakespring.library.dto.ResourceOverview;
-import org.yeffrey.cheesecakespring.library.ports.ResourceRepository;
+import org.yeffrey.cheesecakespring.library.ports.ResourceRepositoryPort;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class ResourceRepositoryAdapter implements ResourceRepository {
+@PortAdapter
+@Component
+public class ResourceRepositoryAdapter implements ResourceRepositoryPort {
     private final ResourceRepositoryJpa resourceRepository;
-    private final ActivityResourceRepositoryJpa activityResourceRepository;
 
-    public ResourceRepositoryAdapter(ResourceRepositoryJpa resourceRepository, ActivityResourceRepositoryJpa activityResourceRepository) {
+    public ResourceRepositoryAdapter(ResourceRepositoryJpa resourceRepository) {
         this.resourceRepository = resourceRepository;
-        this.activityResourceRepository = activityResourceRepository;
+    }
+
+    @Override
+    public boolean resourceBelongsToUserLibrary(Long resourceId,
+                                                UserId userId) {
+        return this.resourceRepository.resourceBelongsToUserLibrary(resourceId, userId);
     }
 
     @Override
@@ -31,17 +38,12 @@ public class ResourceRepositoryAdapter implements ResourceRepository {
     }
 
     @Override
-    public Optional<Resource> findById(long id) {
+    public List<ResourceOverview> findResourcesByLibrary(Library library) {
+        return this.resourceRepository.findOverviewByLibrary(library);
+    }
+
+    @Override
+    public Optional<Resource> findById(Long id) {
         return this.resourceRepository.findById(id);
-    }
-
-    @Override
-    public List<ResourceOverview> findAll() {
-        return this.resourceRepository.findOverviewBy();
-    }
-
-    @Override
-    public List<ActivityResourceDetails> findAllByActivityId(Long activityId) {
-        return activityResourceRepository.findAllByActivityId(activityId);
     }
 }

@@ -1,13 +1,13 @@
 package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.yeffrey.cheesecakespring.library.domain.ActivityResource;
 import org.yeffrey.cheesecakespring.library.dto.ActivityResourceDetails;
 
 import java.util.List;
 
-// essayons de ne pas utiliser JpaRepository pour voir si on sait s'en passer et definir uniquement les methodes qu'on a besoin
-interface ActivityResourceRepositoryJpa extends Repository<ActivityResource, Long> {
-
+@Repository
+interface ActivityResourceRepositoryJpa extends JpaRepository<ActivityResource, Long> {
     List<ActivityResourceDetails> findAllByActivityId(Long activityId);
 }

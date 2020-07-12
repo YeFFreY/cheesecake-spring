@@ -1,6 +1,7 @@
 package org.yeffrey.cheesecakespring.infrastructure.web.rest.activities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -8,6 +9,7 @@ import org.yeffrey.cheesecakespring.infrastructure.RestIntegrationTest;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.EntityId;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.ActivitiesEndpoint;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.ActivityResourcesEndpoint;
+import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.LibrariesEndpoint;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.ResourcesEndpoint;
 import org.yeffrey.cheesecakespring.library.dto.AddResourceToActivityCommand;
 import org.yeffrey.cheesecakespring.library.dto.AdjustActivityResourceQuantityCommand;
@@ -20,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ActivityResourcesControllerTest extends RestIntegrationTest
-    implements ActivitiesEndpoint, ResourcesEndpoint, ActivityResourcesEndpoint {
+    implements ActivitiesEndpoint, ResourcesEndpoint, ActivityResourcesEndpoint, LibrariesEndpoint {
 
     @Override
     public MockMvc getMvc() {
@@ -47,6 +49,11 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
 
     private AdjustActivityResourceQuantityCommand givenAdjustActivityResourceQtyCommandWithInvalidValue() {
         return new AdjustActivityResourceQuantityCommand(-10);
+    }
+
+    @BeforeEach
+    public void givenLibrary() throws Exception {
+        userLibrary();
     }
 
     @Test
@@ -153,46 +160,6 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
             .andExpect(jsonPath("$[*].id", containsInAnyOrder(cmd.resourceId.intValue())));
-    }
-
-    @Test
-    @WithMockUser
-    void userCanUpdateResourceQuantityOfExistingActivity() throws Exception {
-        EntityId activityId = newActivity(givenNewActivityCommand());
-        EntityId resourceId = newResource(givenNewResourceCommand());
-
-        addActivityResource(activityId, new AddResourceToActivityCommand(resourceId.getId(), faker.number().randomDigitNotZero()))
-            .andExpect(status().isCreated());
-
-        var cmd = givenAdjustActivityResourceQtyCommand();
-        adjustActivityResourceQuantity(activityId, resourceId, cmd)
-            .andExpect(status().isOk());
-
-        showActivityResources(activityId)
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[*].id", containsInAnyOrder(resourceId.getId().intValue())))
-            .andExpect(jsonPath("$[*].quantity", containsInAnyOrder(cmd.quantity)));
-    }
-
-    @Test
-    @WithMockUser
-    void userCannotUpdateResourceQuantityOfExistingActivityWithInvalidQuantity() throws Exception {
-        EntityId activityId = newActivity(givenNewActivityCommand());
-        EntityId resourceId = newResource(givenNewResourceCommand());
-
-        int initialQuantity = faker.number().randomDigitNotZero();
-        addActivityResource(activityId, new AddResourceToActivityCommand(resourceId.getId(), initialQuantity))
-            .andExpect(status().isCreated());
-
-        adjustActivityResourceQuantity(activityId, resourceId, givenAdjustActivityResourceQtyCommandWithInvalidValue())
-            .andExpect(status().isBadRequest());
-
-        showActivityResources(activityId)
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[*].id", containsInAnyOrder(resourceId.getId().intValue())))
-            .andExpect(jsonPath("$[*].quantity", containsInAnyOrder(initialQuantity)));
     }
 
 /*    @Test

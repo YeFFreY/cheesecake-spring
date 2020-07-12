@@ -13,10 +13,12 @@ CREATE TABLE resources
         constraint resources_uuid_uk UNIQUE,
     name          character varying(255) not null,
     description   text,
+    library_id    bigint                 not null,
     created_by    character varying(255) not null,
     quantity_unit character varying(255) not null,
     version       integer                not null default 0,
-    CONSTRAINT resources_pkey PRIMARY KEY (id)
+    CONSTRAINT resources_pkey PRIMARY KEY (id),
+    CONSTRAINT resources_library_fkey FOREIGN KEY (library_id) references libraries (id)
 );
 
 CREATE TABLE activity_resources

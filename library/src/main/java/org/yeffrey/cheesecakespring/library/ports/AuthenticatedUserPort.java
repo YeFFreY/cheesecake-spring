@@ -4,6 +4,6 @@ import org.yeffrey.cheesecakespring.library.domain.UserId;
 
 import java.util.Optional;
 
-public interface AuthenticatedUserService {
-    Optional<UserId> getAuthenticatedUserId();
+public interface AuthenticatedUserPort {
+    Optional<UserId> findAuthenticatedUserId();
 }

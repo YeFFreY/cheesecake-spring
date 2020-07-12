@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 public abstract class RestIntegrationTest {
     protected Faker faker = new Faker();
 
+    protected String aUser = "user";
+    protected String anotherUser = "anotherUser";
 
     @Autowired
     protected MockMvc mvc;

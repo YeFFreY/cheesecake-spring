@@ -8,18 +8,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 @ConditionalOnProperty(value = "keycloak.enabled", matchIfMissing = true)
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AuthenticationConfiguration extends KeycloakWebSecurityConfigurerAdapter {
 
     @Autowired
@@ -40,10 +39,16 @@ public class AuthenticationConfiguration extends KeycloakWebSecurityConfigurerAd
         return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
 
+    @Bean
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.cors().and()
+        http.httpBasic().disable()
+            .cors().and()
             .csrf().disable()
             .authorizeRequests()
             .antMatchers("/api").permitAll()

@@ -1,4 +1,4 @@
-package org.yeffrey.cheesecakespring.infrastructure.persistence;
+package org.yeffrey.cheesecakespring.infrastructure.persistence.converters;
 
 import org.yeffrey.cheesecakespring.library.domain.ResourceDescription;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 import java.util.Objects;
 
 @Converter(autoApply = true)
-public class ResourceDescriptionAttributeConverter implements AttributeConverter<ResourceDescription, String> {
+class ResourceDescriptionAttributeConverter implements AttributeConverter<ResourceDescription, String> {
     @Override
     public String convertToDatabaseColumn(ResourceDescription attribute) {
         return Objects.nonNull(attribute) ? attribute.asString() : null;

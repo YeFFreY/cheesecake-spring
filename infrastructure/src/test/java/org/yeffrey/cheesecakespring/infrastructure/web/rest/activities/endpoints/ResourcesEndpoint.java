@@ -58,11 +58,11 @@ public interface ResourcesEndpoint {
     }
 
 
-    default void updateResource(EntityId entityId, CreateUpdateResourceCommand command) throws Exception {
-        getMvc().perform(put("/api/resources/{id}", entityId.getId())
-                             .content(getMapper().writeValueAsString(command))
-                             .contentType(MediaType.APPLICATION_JSON)
-                             .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+    default ResultActions updateResource(EntityId entityId,
+                                         CreateUpdateResourceCommand command) throws Exception {
+        return getMvc().perform(put("/api/resources/{id}", entityId.getId())
+                                    .content(getMapper().writeValueAsString(command))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON));
     }
 }

@@ -1,41 +1,23 @@
 package org.yeffrey.cheesecakespring.library;
 
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.yeffrey.cheesecakespring.library.domain.UserId;
-import org.yeffrey.cheesecakespring.library.ports.*;
+import org.yeffrey.cheesecakespring.library.ports.AuthenticatedUserPort;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
-class ActivitiesConfiguration {
+@EntityScan
+class LibraryConfiguration {
 
     @Bean
-    public AuditorAware<UserId> auditorProvider(AuthenticatedUserService authenticatedUserService) {
-        return authenticatedUserService::getAuthenticatedUserId;
-    }
-
-    ActivityStories activityStories() {
-        return activityStories(ActivityRepositoryInMemory.instance());
-    }
-
-    private ActivityStories activityStories(ActivityRepository activityRepository) {
-        return new ActivityStories(activityRepository);
-    }
-
-    ResourceStories resourceStories() {
-        return resourceStories(ResourceRepositoryInMemory.instance());
-    }
-
-    private ResourceStories resourceStories(ResourceRepository resourceRepository) {
-        return new ResourceStories(resourceRepository);
-    }
-
-    ActivityResourceStories activityResourceStories() {
-        return new ActivityResourceStories(ActivityRepositoryInMemory.instance(), ResourceRepositoryInMemory.instance());
+    public AuditorAware<UserId> auditorProvider(AuthenticatedUserPort authenticatedUserPort) {
+        return authenticatedUserPort::findAuthenticatedUserId;
     }
 
     // https://www.baeldung.com/spring-enum-request-param

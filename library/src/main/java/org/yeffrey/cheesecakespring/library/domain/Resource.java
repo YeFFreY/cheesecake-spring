@@ -1,7 +1,5 @@
 package org.yeffrey.cheesecakespring.library.domain;
 
-import org.yeffrey.cheesecakespring.library.core.AuditedDomain;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -9,13 +7,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity
 @Table(name = "resources")
-public class Resource extends AuditedDomain {
+public class Resource extends LibraryDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "resources_generator")
     @SequenceGenerator(name = "resources_generator", sequenceName = "resources_seq", allocationSize = 1)
     private Long id;
 
+    @NotNull
     private ResourceName name;
 
     private ResourceDescription description;
@@ -28,20 +27,30 @@ public class Resource extends AuditedDomain {
     protected Resource() {
     }
 
-    private Resource(ResourceName name, ResourceDescription description, ResourceQuantityUnit quantityUnit) {
+    private Resource(Library library,
+                     ResourceName name,
+                     ResourceDescription description,
+                     ResourceQuantityUnit quantityUnit) {
         this.name = name;
         this.description = description;
         this.quantityUnit = quantityUnit;
+        this.library = library;
     }
 
-    public static Resource from(ResourceName name, ResourceDescription description, ResourceQuantityUnit quantityUnit) {
+    public static Resource from(Library library,
+                                ResourceName name,
+                                ResourceDescription description,
+                                ResourceQuantityUnit quantityUnit) {
+        checkNotNull(library);
         checkNotNull(name);
         checkNotNull(quantityUnit);
-        return new Resource(name, description, quantityUnit);
+        return new Resource(library, name, description, quantityUnit);
     }
 
 
-    public Resource updateDetails(ResourceName name, ResourceDescription description, ResourceQuantityUnit quantityUnit) {
+    public Resource updateDetails(ResourceName name,
+                                  ResourceDescription description,
+                                  ResourceQuantityUnit quantityUnit) {
         checkNotNull(name);
         checkNotNull(quantityUnit);
         this.name = name;

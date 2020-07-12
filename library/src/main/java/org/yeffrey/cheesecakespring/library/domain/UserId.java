@@ -19,6 +19,14 @@ public class UserId implements Serializable {
         return new UserId(value);
     }
 
+    public String asString() {
+        return this.value;
+    }
+
+    public static UserId system() {
+        return new UserId("system");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -32,11 +40,4 @@ public class UserId implements Serializable {
         return Objects.hash(value);
     }
 
-    public String asString() {
-        return this.value;
-    }
-
-    public static UserId system() {
-        return new UserId("system");
-    }
 }

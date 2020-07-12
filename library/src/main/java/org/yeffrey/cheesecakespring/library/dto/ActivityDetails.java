@@ -26,4 +26,13 @@ public class ActivityDetails implements ModelDto {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        return "ActivityDetails{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            '}';
+    }
 }
