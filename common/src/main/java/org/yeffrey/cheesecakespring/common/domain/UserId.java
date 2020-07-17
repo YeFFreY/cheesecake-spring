@@ -1,4 +1,4 @@
-package org.yeffrey.cheesecakespring.library.domain;
+package org.yeffrey.cheesecakespring.common.domain;
 
 import org.apache.logging.log4j.util.Strings;
 

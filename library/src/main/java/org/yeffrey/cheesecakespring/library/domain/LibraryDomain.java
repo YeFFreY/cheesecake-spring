@@ -1,6 +1,7 @@
 package org.yeffrey.cheesecakespring.library.domain;
 
-import org.yeffrey.cheesecakespring.library.core.AuditedDomain;
+
+import org.yeffrey.cheesecakespring.common.domain.AuditedDomain;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;

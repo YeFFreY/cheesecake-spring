@@ -2,6 +2,7 @@ package org.yeffrey.cheesecakespring.library.domain
 
 import com.github.javafaker.Faker
 import groovy.transform.CompileStatic
+import org.yeffrey.cheesecakespring.common.domain.UserId
 
 @CompileStatic
 trait DomainSamples {

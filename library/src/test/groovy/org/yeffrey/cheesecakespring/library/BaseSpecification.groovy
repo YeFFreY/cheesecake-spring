@@ -1,7 +1,7 @@
 package org.yeffrey.cheesecakespring.library
 
 import com.github.javafaker.Faker
-import org.yeffrey.cheesecakespring.library.domain.UserId
+import org.yeffrey.cheesecakespring.common.domain.UserId
 import org.yeffrey.cheesecakespring.library.ports.AuthenticatedUserPort
 import org.yeffrey.cheesecakespring.library.ports.MockActivityRepository
 import org.yeffrey.cheesecakespring.library.ports.MockLibraryRepository

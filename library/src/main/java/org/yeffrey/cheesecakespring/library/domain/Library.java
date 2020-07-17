@@ -1,6 +1,8 @@
 package org.yeffrey.cheesecakespring.library.domain;
 
-import org.yeffrey.cheesecakespring.library.core.AuditedDomain;
+
+import org.yeffrey.cheesecakespring.common.domain.AuditedDomain;
+import org.yeffrey.cheesecakespring.common.domain.UserId;
 
 import javax.persistence.*;
 

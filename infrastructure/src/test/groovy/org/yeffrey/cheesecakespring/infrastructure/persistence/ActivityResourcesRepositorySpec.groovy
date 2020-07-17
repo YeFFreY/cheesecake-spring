@@ -2,9 +2,9 @@ package org.yeffrey.cheesecakespring.infrastructure.persistence
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
+import org.yeffrey.cheesecakespring.common.domain.UserId
 import org.yeffrey.cheesecakespring.library.domain.DomainSamples
 import org.yeffrey.cheesecakespring.library.domain.Library
-import org.yeffrey.cheesecakespring.library.domain.UserId
 
 class ActivityResourcesRepositorySpec extends IntegrationSpecification implements DomainSamples {
     @Autowired

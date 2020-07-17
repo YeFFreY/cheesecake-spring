@@ -1,4 +1,4 @@
-package org.yeffrey.cheesecakespring.library.core;
+package org.yeffrey.cheesecakespring.common.domain;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;

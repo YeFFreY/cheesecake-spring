@@ -2,7 +2,7 @@ package org.yeffrey.cheesecakespring.library.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.yeffrey.cheesecakespring.library.domain.UserId;
+import org.yeffrey.cheesecakespring.common.domain.UserId;
 import org.yeffrey.cheesecakespring.library.ports.ActivityRepositoryPort;
 import org.yeffrey.cheesecakespring.library.ports.ResourceRepositoryPort;
 

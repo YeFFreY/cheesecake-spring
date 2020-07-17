@@ -1,10 +1,10 @@
 package org.yeffrey.cheesecakespring.infrastructure.persistence;
 
 import org.springframework.stereotype.Component;
+import org.yeffrey.cheesecakespring.common.domain.UserId;
 import org.yeffrey.cheesecakespring.infrastructure.core.PortAdapter;
 import org.yeffrey.cheesecakespring.library.domain.Activity;
 import org.yeffrey.cheesecakespring.library.domain.Library;
-import org.yeffrey.cheesecakespring.library.domain.UserId;
 import org.yeffrey.cheesecakespring.library.dto.ActivityDetails;
 import org.yeffrey.cheesecakespring.library.dto.ActivityOverview;
 import org.yeffrey.cheesecakespring.library.dto.ActivityResourceDetails;

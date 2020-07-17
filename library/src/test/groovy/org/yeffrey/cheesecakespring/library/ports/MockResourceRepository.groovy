@@ -1,8 +1,8 @@
 package org.yeffrey.cheesecakespring.library.ports
 
+import org.yeffrey.cheesecakespring.common.domain.UserId
 import org.yeffrey.cheesecakespring.library.domain.Library
 import org.yeffrey.cheesecakespring.library.domain.Resource
-import org.yeffrey.cheesecakespring.library.domain.UserId
 import org.yeffrey.cheesecakespring.library.dto.ResourceDetails
 import org.yeffrey.cheesecakespring.library.dto.ResourceOverview
 

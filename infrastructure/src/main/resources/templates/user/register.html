@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout/no-menu}">
+<head>
+    <title>REGISTER</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!--/*@thymesVar id="registerCommand" type="org.yeffrey.cheesecakespring.users.dto.RegisterCommand"*/-->
+    <form action="#" th:action="@{/user/register}" th:object="${registerCommand}" method="post">
+        <h2>Please register</h2>
+
+        <!--     <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+                 <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
+                 <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>
+                 <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
+             </div>-->
+
+        <div>
+            <label for="email">Email</label>
+            <input type="text" th:field="*{email}" id="email" required="required" autofocus="autofocus"
+                   th:classappend="${#fields.hasErrors('email')} ? error"/>
+            <span class="help-inline" th:errors="*{email}">[error]</span>
+        </div>
+
+        <div>
+            <label for="username">Username</label>
+            <input type="text" th:field="*{username}" id="username" required="required"
+                   th:classappend="${#fields.hasErrors('username')} ? error"/>
+            <span class="help-inline" th:errors="*{username}">[error]</span>
+        </div>
+
+        <div>
+            <label for="password">Password</label>
+            <input type="password" th:field="*{password}" id="password" required="required"
+                   th:classappend="${#fields.hasErrors('password')} ? error"/>
+            <span class="help-inline" th:errors="*{password}">[error]</span>
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+</div>
+</body>
+</html>

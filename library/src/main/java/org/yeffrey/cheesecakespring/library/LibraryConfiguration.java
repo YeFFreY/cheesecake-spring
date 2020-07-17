@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.yeffrey.cheesecakespring.library.domain.UserId;
+import org.yeffrey.cheesecakespring.common.domain.UserId;
 import org.yeffrey.cheesecakespring.library.ports.AuthenticatedUserPort;
 
 @Configuration

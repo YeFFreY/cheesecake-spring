@@ -1,5 +1,6 @@
 package org.yeffrey.cheesecakespring.library.domain
 
+import org.yeffrey.cheesecakespring.common.domain.UserId
 import org.yeffrey.cheesecakespring.library.BaseSpecification
 import spock.lang.Unroll
 

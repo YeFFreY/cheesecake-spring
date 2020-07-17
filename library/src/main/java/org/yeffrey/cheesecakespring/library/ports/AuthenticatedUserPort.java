@@ -1,6 +1,6 @@
 package org.yeffrey.cheesecakespring.library.ports;
 
-import org.yeffrey.cheesecakespring.library.domain.UserId;
+import org.yeffrey.cheesecakespring.common.domain.UserId;
 
 import java.util.Optional;
 

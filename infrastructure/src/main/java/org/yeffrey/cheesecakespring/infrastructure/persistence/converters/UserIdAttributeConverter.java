@@ -1,6 +1,6 @@
 package org.yeffrey.cheesecakespring.infrastructure.persistence.converters;
 
-import org.yeffrey.cheesecakespring.library.domain.UserId;
+import org.yeffrey.cheesecakespring.common.domain.UserId;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
