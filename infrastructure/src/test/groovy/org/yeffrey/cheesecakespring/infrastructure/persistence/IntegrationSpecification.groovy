@@ -14,7 +14,7 @@ import org.yeffrey.cheesecakespring.infrastructure.core.PortAdapter
 import spock.lang.Shared
 import spock.lang.Specification
 
-@ActiveProfiles(["repository-only"])
+@ActiveProfiles(["integration", "repository-only"])
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = [PortAdapter.class]))
 // because the classes annotated with Repository are not the jpa interface...
