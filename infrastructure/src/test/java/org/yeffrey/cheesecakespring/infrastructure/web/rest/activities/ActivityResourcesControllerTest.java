@@ -12,7 +12,6 @@ import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.LibrariesEndpoint;
 import org.yeffrey.cheesecakespring.infrastructure.web.rest.activities.endpoints.ResourcesEndpoint;
 import org.yeffrey.cheesecakespring.library.dto.AddResourceToActivityCommand;
-import org.yeffrey.cheesecakespring.library.dto.AdjustActivityResourceQuantityCommand;
 import org.yeffrey.cheesecakespring.library.dto.CreateUpdateActivityCommand;
 import org.yeffrey.cheesecakespring.library.dto.CreateUpdateResourceCommand;
 
@@ -43,14 +42,6 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
         return new CreateUpdateResourceCommand(faker.lorem().sentence(), faker.lorem().paragraph(), "Item");
     }
 
-    private AdjustActivityResourceQuantityCommand givenAdjustActivityResourceQtyCommand() {
-        return new AdjustActivityResourceQuantityCommand(faker.number().numberBetween(1, 100));
-    }
-
-    private AdjustActivityResourceQuantityCommand givenAdjustActivityResourceQtyCommandWithInvalidValue() {
-        return new AdjustActivityResourceQuantityCommand(-10);
-    }
-
     @BeforeEach
     public void givenLibrary() throws Exception {
         userLibrary();
@@ -73,7 +64,7 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
             .andExpect(jsonPath("$[*].quantity", containsInAnyOrder(cmd.quantity)));
     }
 
-/*
+
     @Test
     @WithMockUser
     void userCannotAddResourceToActivityFromAnotherUser() throws Exception {
@@ -82,16 +73,15 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
 
         var cmd = new AddResourceToActivityCommand(resourceId.getId(), faker.number().randomDigitNotZero());
         addActivityResource(activityId, cmd, "anotherUser")
-            .andExpect(status().isNotFound());
+            .andExpect(status().isForbidden());
 
         showActivityResources(activityId)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(0)));
     }
-*/
 
 
-/*    @Test
+    @Test
     @WithMockUser
     void userCannotAddHisResourceToActivityFromAnotherUser() throws Exception {
         EntityId activityId = newActivity(givenNewActivityCommand());
@@ -99,12 +89,12 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
 
         var cmd = new AddResourceToActivityCommand(resourceId.getId(), faker.number().randomDigitNotZero());
         addActivityResource(activityId, cmd, "anotherUser")
-            .andExpect(status().isNotFound());
+            .andExpect(status().isForbidden());
 
         showActivityResources(activityId)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(0)));
-    }*/
+    }
 
     @Test
     @WithMockUser
@@ -124,7 +114,7 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
             .andExpect(jsonPath("$", hasSize(0)));
     }
 
-/*    @Test
+    @Test
     @WithMockUser
     void userCannotRemoveResourceFromAnotherUserActivity() throws Exception {
         EntityId activityId = newActivity(givenNewActivityCommand());
@@ -135,12 +125,12 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
             .andExpect(status().isCreated());
 
         removeActivityResource(activityId, resourceId, "anotherUser")
-            .andExpect(status().isNotFound()); // another user has no access to activity or resource of user
+            .andExpect(status().isForbidden()); // another user has no access to activity or resource of user
 
         showActivityResources(activityId)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)));
-    }*/
+    }
 
     @Test
     @WithMockUser
