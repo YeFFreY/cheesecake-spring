@@ -4,7 +4,7 @@ import org.yeffrey.cheesecakespring.common.domain.UserId
 import org.yeffrey.cheesecakespring.library.BaseSpecification
 import spock.lang.Unroll
 
-class ActivitySpec extends BaseSpecification implements DomainSamples {
+class ActivitySpec extends BaseSpecification implements LibrarySamples {
     def library = Library.from(UserId.from(faker.name().username()))
 
     @Unroll

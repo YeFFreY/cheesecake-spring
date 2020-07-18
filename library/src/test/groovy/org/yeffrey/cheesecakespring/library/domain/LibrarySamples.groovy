@@ -5,11 +5,11 @@ import groovy.transform.CompileStatic
 import org.yeffrey.cheesecakespring.common.domain.UserId
 
 @CompileStatic
-trait DomainSamples {
+trait LibrarySamples {
     static Faker faker = new Faker()
 
-    static Library givenLibrary(UserId userId) {
-        return Library.from(userId)
+    static Library givenLibrary(String userId) {
+        return Library.from(UserId.from(userId))
     }
 
     static Activity givenActivity(Library library = null) {

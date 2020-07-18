@@ -30,17 +30,17 @@ public class User extends BaseDomain {
     protected User() {
     }
 
-    private User(@NotNull String username,
-                 @NotNull String password,
-                 @Email @NotNull String email) {
+    private User(String username,
+                 String password,
+                 String email) {
         this.username = username;
         this.password = password;
         this.email = email;
     }
 
-    public static User from(@NotNull String username,
-                            @NotNull String password,
-                            @Email @NotNull String email) {
+    public static User from(String username,
+                            String password,
+                            String email) {
         Preconditions.checkArgument(Strings.isNotBlank(username));
         Preconditions.checkArgument(Strings.isNotBlank(password));
         Preconditions.checkArgument(Strings.isNotBlank(email));

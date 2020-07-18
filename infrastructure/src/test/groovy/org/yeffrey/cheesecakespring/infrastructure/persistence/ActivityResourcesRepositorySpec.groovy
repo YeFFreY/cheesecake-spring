@@ -2,11 +2,10 @@ package org.yeffrey.cheesecakespring.infrastructure.persistence
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.yeffrey.cheesecakespring.common.domain.UserId
-import org.yeffrey.cheesecakespring.library.domain.DomainSamples
 import org.yeffrey.cheesecakespring.library.domain.Library
+import org.yeffrey.cheesecakespring.library.domain.LibrarySamples
 
-class ActivityResourcesRepositorySpec extends IntegrationSpecification implements DomainSamples {
+class ActivityResourcesRepositorySpec extends IntegrationSpecification implements LibrarySamples {
     @Autowired
     private TestEntityManager entityManager
 
@@ -22,7 +21,7 @@ class ActivityResourcesRepositorySpec extends IntegrationSpecification implement
     Library library
 
     def setup() {
-        library = libraryRepository.save(Library.from(UserId.from(faker.name().username())))
+        library = libraryRepository.save(givenLibrary(faker.name().username()))
     }
 
 
