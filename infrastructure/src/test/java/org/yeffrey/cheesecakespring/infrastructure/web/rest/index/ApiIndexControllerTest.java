@@ -14,7 +14,7 @@ class ApiIndexControllerTest extends RestIntegrationTest {
     @Test
     @WithMockUser
     void getIndex() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/")
+        mvc.perform(MockMvcRequestBuilders.get("/api")
                         .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(JsonTestUtils.hasLinksCount(1))

@@ -14,8 +14,7 @@ import org.yeffrey.cheesecakespring.library.dto.CreateUpdateActivityCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class ActivitiesControllerTest extends RestIntegrationTest implements ActivitiesEndpoint, LibrariesEndpoint {
 
@@ -105,6 +104,7 @@ class ActivitiesControllerTest extends RestIntegrationTest implements Activities
         newActivity(givenACreateUpdateCommand(), this.anotherUser);
 
         showActivities()
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(2)))
             .andExpect(jsonPath("$[*].id", containsInAnyOrder(entityId.getId().intValue(), anotherEntityId.getId().intValue())))
             .andExpect(jsonPath("$[*].name", containsInAnyOrder(command.name, anotherCommand.name)))
@@ -112,4 +112,13 @@ class ActivitiesControllerTest extends RestIntegrationTest implements Activities
 
     }
 
+
+    @Test
+    @WithMockUser
+    void userShouldNotRetrieveAnyActivitiesIfHisLibraryWasNotFound() throws Exception {
+        showActivities("unknownUser")
+            .andExpect(status().isNotFound())
+            .andExpect(content().string(""));
+
+    }
 }

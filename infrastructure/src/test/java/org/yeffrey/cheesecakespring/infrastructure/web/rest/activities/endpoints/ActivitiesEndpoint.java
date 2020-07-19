@@ -22,7 +22,8 @@ public interface ActivitiesEndpoint {
     ObjectMapper getMapper();
 
 
-    default EntityId newActivity(CreateUpdateActivityCommand command, @Nullable String userId) throws Exception {
+    default EntityId newActivity(CreateUpdateActivityCommand command,
+                                 @Nullable String userId) throws Exception {
         MockHttpServletRequestBuilder post = post("/api/activities");
 
         if (Objects.nonNull(userId)) {
@@ -51,12 +52,21 @@ public interface ActivitiesEndpoint {
     }
 
     default ResultActions showActivities() throws Exception {
-        return getMvc().perform(get("/api/activities")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+        return this.showActivities(null);
     }
 
+
+    default ResultActions showActivities(String userId) throws Exception {
+        MockHttpServletRequestBuilder getActivities = get("/api/activities")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON);
+
+        if (Objects.nonNull(userId)) {
+            getActivities = getActivities.with(user(userId));
+        }
+
+        return getMvc().perform(getActivities);
+    }
 
     default ResultActions updateActivity(EntityId entityId,
                                          CreateUpdateActivityCommand command) throws Exception {
