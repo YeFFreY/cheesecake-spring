@@ -6,3 +6,7 @@ DELETE
 FROM resources;
 DELETE
 FROM skills;
+DELETE
+FROM libraries;
+DELETE
+FROM users;

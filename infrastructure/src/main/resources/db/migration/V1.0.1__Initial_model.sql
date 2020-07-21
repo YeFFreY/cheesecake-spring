@@ -8,12 +8,12 @@ CREATE SEQUENCE libraries_seq
 
 CREATE TABLE libraries
 (
-    id         bigint                 not null default nextval('libraries_seq'),
-    uuid       character varying(255) not null
+    id       bigint                 not null default nextval('libraries_seq'),
+    uuid     character varying(255) not null
         constraint libraries_uuid_uk UNIQUE,
-    owner_id   character varying(255) not null,
-    created_by character varying(255) not null,
-    version    integer                not null default 0,
+    owner_id character varying(100) not null
+        constraint libraries_owner_uk UNIQUE,
+    version  integer                not null default 0,
     CONSTRAINT libraries_pkey PRIMARY KEY (id)
 );
 

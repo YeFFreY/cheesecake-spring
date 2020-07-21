@@ -1,8 +1,13 @@
 package org.yeffrey.cheesecakespring.library.stories;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+import org.yeffrey.cheesecakespring.common.domain.UserId;
+import org.yeffrey.cheesecakespring.common.event.UserRegisteredEvent;
 import org.yeffrey.cheesecakespring.library.core.AccessDeniedException;
 import org.yeffrey.cheesecakespring.library.domain.Library;
 import org.yeffrey.cheesecakespring.library.domain.exception.LibraryNotFoundException;
@@ -39,6 +44,17 @@ public class LibraryStories {
                 .map(this.libraryRepositoryPort::save)
                 .map(Library::getId)
                 .orElseThrow(AccessDeniedException::new);
+        }
+    }
+
+    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void createLibraryOn(UserRegisteredEvent event) {
+        try {
+            this.findForCurrentUser();
+        } catch (LibraryNotFoundException exception) {
+            Library library = Library.from(UserId.from(event.getUsername()));
+            this.libraryRepositoryPort.save(library).getId();
         }
     }
 }

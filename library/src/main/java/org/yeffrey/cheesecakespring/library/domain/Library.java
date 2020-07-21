@@ -1,7 +1,7 @@
 package org.yeffrey.cheesecakespring.library.domain;
 
 
-import org.yeffrey.cheesecakespring.common.domain.AuditedDomain;
+import org.yeffrey.cheesecakespring.common.domain.BaseDomain;
 import org.yeffrey.cheesecakespring.common.domain.UserId;
 
 import javax.persistence.*;
@@ -10,7 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity
 @Table(name = "libraries")
-public class Library extends AuditedDomain {
+public class Library extends BaseDomain {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "libraries_generator")
     @SequenceGenerator(name = "libraries_generator", sequenceName = "libraries_seq", allocationSize = 1)

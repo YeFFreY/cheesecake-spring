@@ -11,9 +11,11 @@ CREATE TABLE users
     id       bigint                 not null default nextval('users_seq'),
     uuid     character varying(255) not null
         constraint users_uuid_uk UNIQUE,
-    username character varying(100) not null,
+    username character varying(100) not null
+        constraint users_username_uk UNIQUE,
     password character varying(100) not null,
-    email    character varying(320) not null,
+    email    character varying(320) not null
+        constraint users_email_uk UNIQUE,
     version  integer                not null default 0,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );

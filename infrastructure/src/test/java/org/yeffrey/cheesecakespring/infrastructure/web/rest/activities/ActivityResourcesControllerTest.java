@@ -45,6 +45,7 @@ class ActivityResourcesControllerTest extends RestIntegrationTest
     @BeforeEach
     public void givenLibrary() throws Exception {
         userLibrary();
+        userLibrary("anotherUser");
     }
 
     @Test

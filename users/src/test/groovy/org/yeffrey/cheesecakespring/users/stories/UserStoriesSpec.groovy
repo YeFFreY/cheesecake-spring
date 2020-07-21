@@ -5,7 +5,7 @@ import org.yeffrey.cheesecakespring.users.dto.RegisterCommand
 
 class UserStoriesSpec extends BaseSpecification {
 
-    def stories = new UserStories(userRepository)
+    def stories = new UserStories(userRepository, eventPublisher)
 
     def newRegisterCommand() {
         def command = new RegisterCommand()
@@ -25,5 +25,6 @@ class UserStoriesSpec extends BaseSpecification {
         then: "user receives an id and cannot register anymore"
             user.id != null;
             stories.register(command) == null
+            1 * eventPublisher.publish(!null)
     }
 }

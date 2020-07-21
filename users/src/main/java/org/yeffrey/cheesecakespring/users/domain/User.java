@@ -18,7 +18,9 @@ public class User extends BaseDomain {
     private Long id;
 
     @NotNull
-    private String username;
+    private String username; // FIXME will be immutable
+
+    //TODO add a "display name" which can be modified by user, its first value will be the username
 
     @NotNull
     private String password;

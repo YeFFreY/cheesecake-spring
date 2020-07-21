@@ -2,6 +2,8 @@ package org.yeffrey.cheesecakespring.users.stories;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yeffrey.cheesecakespring.common.event.EventPublisher;
+import org.yeffrey.cheesecakespring.common.event.UserRegisteredEvent;
 import org.yeffrey.cheesecakespring.users.domain.User;
 import org.yeffrey.cheesecakespring.users.dto.RegisterCommand;
 import org.yeffrey.cheesecakespring.users.ports.UserRepositoryPort;
@@ -10,9 +12,12 @@ import org.yeffrey.cheesecakespring.users.ports.UserRepositoryPort;
 @Transactional(readOnly = true)
 public class UserStories {
     private final UserRepositoryPort userRepositoryPort;
+    private final EventPublisher eventPublisher;
 
-    public UserStories(UserRepositoryPort userRepositoryPort) {
+    public UserStories(UserRepositoryPort userRepositoryPort,
+                       EventPublisher eventPublisher) {
         this.userRepositoryPort = userRepositoryPort;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -22,6 +27,7 @@ public class UserStories {
         }
 
         User newUser = User.from(command.getUsername(), this.userRepositoryPort.encodePassword(command.getPassword()), command.getEmail());
+        this.eventPublisher.publish(UserRegisteredEvent.from(newUser.getUsername()));
         return this.userRepositoryPort.save(newUser);
     }
 
